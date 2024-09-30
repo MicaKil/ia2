@@ -638,3 +638,167 @@ Here there is a linear function for **each** class.
 (The mathier students will recognize that some cancellation is possible, and only $K - 1$ linear functions are needed as in 2-class logistic regression.) 
 
 Multiclass logistic regression is also referred to as **multinomial regression**.
+
+# Linear Model Selection and Regularization
+
+Despite its simplicity, the linear model has distinct  advantages in terms of its interpretability and often shows  good predictive performance.
+
+Hence, we discuss some ways in which the simple linear model can be improved, by replacing ordinary least squares fitting with some alternative fitting procedures.
+
+## Alternatives to Least Squares
+
+### Why Consider Alternatives to Least Squares?
+
+**Prediction Accuracy**
+
+If $n$ (the number of observations) is not much larger than $p$ (the number of variables or predictor or features), then there can be a lot of variability in the least  squares fit. Sometimes we need to shrink $p$, especially when $p > n$, to control the variance.
+
+**Model Interpretability**
+
+By removing irrelevant features — that is, by setting the corresponding coefficient estimates to zero — we can obtain a model that is more easily interpreted. We will present some approaches for automatically performing feature selection.
+
+### Three Classes of Methods
+ 
+**Subset Selection**
+
+We identify a subset of the $p$ predictors that we believe to be related to the response. We then fit a model using least squares on the reduced set of variables.
+
+There're $2^p$ possible models, so this is computationally infeasible for large $p$.
+
+**Shrinkage**
+
+We fit a model involving all $p$ predictors, but the estimated coefficients are shrunken towards zero relative to the least squares estimates. This shrinkage (also known as **regularization**) has the effect of reducing variance and can also perform variable selection.
+
+**Dimension Reduction**
+
+We project the $p$ predictors into an $M$-dimensional subspace, where $M < p$. This is achieved by computing $M$ different linear combinations, or projections, of the variables. Then these $M$ projections are used as predictors to fit a linear regression model by least squares.
+
+## Shrinkage Methods
+
+### Ridge Regression and Lasso
+- The subset selection methods use least squares to fit a linear model that contains a subset of the predictors.
+- As an alternative, we can fit a model containing all $p$ predictors using a technique that **constrains** or **regularizes** the coefficient estimates, or equivalently, that **shrinks** the coefficient estimates towards zero.
+- It may not be immediately obvious why such a constraint should improve the fit, but it turns out that shrinking the coefficient estimates can significantly reduce their variance.
+
+## Ridge Regression
+Recall that the least squares fitting procedure estimates $\beta_0, \beta_1, \ldots, \beta_p$ using the values that minimize
+
+$$
+RSS = \sum_{i=1}^n \left( y_i - \beta_0 - \sum_{j=1}^p \beta_j x_{ij} \right)^2.
+$$
+
+In contrast, the ridge regression coefficient estimates $\hat{\beta}^R$ are the values that minimize
+
+$$
+\sum_{i=1}^n \left( y_i - \beta_0 - \sum_{j=1}^p \beta_j x_{ij} \right)^2 + \lambda \sum_{j=1}^p \beta_j^2 = RSS + \lambda \sum_{j=1}^p \beta_j^2,
+$$
+
+where $\lambda \geq 0$ is a tuning parameter, to be determined separately.
+
+- As with least squares, ridge regression seeks coefficient estimates that fit the data well, by making the RSS small.
+- However, the second term, $\lambda \sum_{j} \beta_j^2$, called a shrinkage penalty, is small when $\beta_1, \ldots, \beta_p$ are close to zero, and so it has the effect of shrinking the estimates of $\beta_j$ towards zero.
+- The **tuning parameter** $\lambda$ serves to control the relative impact of these two terms on the regression coefficient estimates.
+  - $\lambda = 0$: The penalty term has no effect. Ridge regression estimates will be identical to least squares estimates.
+  - $\lambda \to \infty$: The penalty term dominates the criterion, and the ridge regression coefficient estimates will be shrunk towards zero.
+- Selecting a good value for $\lambda$ is critical; cross-validation is used for this.
+
+### Tuning parameter $\lambda$
+
+![img.png](figs/3/img.png)
+
+- In the left-hand panel, each curve corresponds to the ridge  regression coefficient estimate for one of the ten variables,  plotted as a function of $\lambda$.
+  - The right-hand panel displays the same ridge coefficient estimates as the left-hand panel, but instead of displaying $\lambda$ on the x-axis, we now display $ ||\hat{\beta}^R_\lambda||_2/||\hat{\beta}^R||_2 $, where $ \hat{\beta} $  denotes the vector of least squares coefficient estimates.
+- The notation $ ||\hat{\beta}||_2 $denotes the $\ell_2$ norm (pronounced “ell 2”) of a vector, and is defined as $ ||\hat{\beta}||_2 = \sqrt{\sum_{j=1}^p \beta_j^2} $.
+
+### Standardizing the Variables
+
+It is best to apply ridge regression after standardizing the predictors, using the formula
+
+$$
+\tilde{x}_{ij} = \frac{x_{ij}}{\sqrt{\frac{1}{n} \sum_{i=1}^n (x_{ij} - \bar{x}_j)^2}},
+$$
+
+so that they are all on the **same scale**. In this formula, the denominator is the estimated standard deviation of the $j $-th predictor. Consequently, all the standardized predictors will have a standard deviation of one. As a result, the final fit will not depend on the scale on which the predictors are measured.
+
+## Why Does Ridge Regression Improve Over Least Squares?
+
+### The Bias-Variance Tradeoff
+
+![img_1.png](figs/3/img_1.png)
+
+Simulated data with $ n = 50 $ observations, $ p = 45 $ predictors, all having nonzero coefficients. Squared bias (black), variance (green), and test mean squared error (purple) for the ridge regression predictions on a simulated data set, as a function of $ \lambda $ and $ \frac{||\hat{\beta}^R_\lambda||_2}{||\hat{\beta}||_2} $. The horizontal dashed lines indicate the minimum possible MSE. The purple crosses indicate the ridge regression models for which the MSE is smallest.
+
+## The Lasso
+
+- Ridge regression does have one obvious disadvantage: unlike subset selection, which will generally select models that involve just a subset of the variables, ridge regression will include all $ p $ predictors in the final model.
+- The Lasso is a relatively recent alternative to ridge regression that overcomes this disadvantage. The lasso coefficients, $ \hat{\beta}^L_\lambda $, minimize the quantity
+
+$$
+\sum_{i=1}^n \left( y_i - \beta_0 - \sum_{j=1}^p \beta_j x_{ij} \right)^2 + \lambda \sum_{j=1}^p |\beta_j| = RSS + \lambda \sum_{j=1}^p |\beta_j|.
+$$
+
+- In statistical parlance, the lasso uses an $ \ell_1 $ (pronounced “ell 1”) penalty instead of an $ \ell_2 $ penalty. The $ \ell_1 $ norm of a coefficient vector $ \beta $ is given by $ ||\beta||_1 = \sum |\beta_j| $.
+
+- As with ridge regression, the lasso shrinks the coefficient estimates towards zero.
+  - However, in the case of the lasso, the $ \ell_1 $ penalty has the effect of forcing some of the coefficient estimates to be exactly equal to zero when the tuning parameter $ \lambda $ is sufficiently large.
+  - Hence, much like best subset selection, the lasso performs **variable selection**.
+- We say that the lasso yields **sparse models** — that is, models that involve only a subset of the variables.
+- As in ridge regression, selecting a good value of $ \lambda $ for the lasso is critical; cross-validation is again the method of choice.
+
+## Comparing the Lasso and Ridge Regression
+
+![img_2.png](figs/3/img_2.png)
+
+- **Left**: Plots of squared bias (black), variance (green), and test MSE (purple) for the lasso on simulated data set of Slide 32.
+- **Right**: Comparison of squared bias, variance and test MSE between lasso (solid) and ridge (dashed). Both are plotted against their $ R^2 $ on the training data, as a common form of indexing. The crosses in both plots indicate the lasso model for which the MSE is smallest.
+
+![img_3.png](figs/3/img_3.png)
+
+- **Left**: Plots of squared bias (black), variance (green), and test MSE (purple) for the lasso. The simulated data is similar to that in Slide 38, except that now only two predictors are related to the response.
+- **Right**: Comparison of squared bias, variance and test MSE between lasso (solid) and ridge (dashed). Both are plotted against their $ R^2 $ on the training data, as a common form of indexing. The crosses in both plots indicate the lasso model for which the MSE is smallest.
+
+These two examples illustrate that neither ridge regression nor the lasso will universally dominate the other.
+- In general, one might expect the **lasso to perform better** when **the response is a function of only a relatively small number of predictors**.
+- However, the number of predictors that is related to the response is never known a priori for real data sets.
+- A technique such as **cross-validation** can be used in order to **determine which approach is better on a particular data set**.
+
+# The Trade-Of Between Prediction Accuracy and Model Interpretability
+
+![img_4.png](figs/3/img_4.png)
+
+*In general, as the flexibility of a method increases, its interpretability decreases.*
+
+There are several reasons that we might prefer a more restrictive model instead of a very flexible approach. If we are mainly interested in inference, then restrictive models are much more interpretable. For instance, when inference is the goal, the linear model may be a good choice since it will be quite easy to understand the relationship between $Y$ and $X_1, X_2,...,X_p$. In contrast, very flexible approaches, such as the splines and boosting methods, can lead to such complicated estimates of $f$ that it is difficult to understand how any individual predictor is associated with the response.
+
+We have established that when inference is the goal, there are clear advantages to using simple and relatively inflexible statistical learning methods. In some settings, however, we are only interested in prediction, and the interpretability of the predictive model is simply not of interest. For instance, if we seek to develop an algorithm to predict the price of a stock, our sole requirement for the algorithm is that it predict accurately— interpretability is not a concern. In this setting, we might expect that it will be best to use the most flexible model available. Surprisingly, this is not always the case! We will often obtain more accurate predictions using a less flexible method. This phenomenon, which may seem counterintuitive at frst glance, has to do with the potential for overflowing in highly flexible methods. 
+
+# The Bias-Variance Trade-Of
+
+Though the mathematical proof is beyond the scope of this book, it is possible to show that the expected test MSE, for a given value$ x_0$, can always be decomposed into the sum of three fundamental quantities: the variance of$ \hat{f}(x_0)$, the squared bias of$ \hat{f}(x_0)$, and the variance of the error terms$ \epsilon$. That is,
+
+$$
+E \left[ (y_0 - \hat{f}(x_0))^2 \right] = \text{Var}(\hat{f}(x_0)) + [\text{Bias}(\hat{f}(x_0))]^2 + \text{Var}(\epsilon). \quad (2.7)
+$$
+
+Here the notation $ E \left[ (y_0 - \hat{f}(x_0))^2 \right] $ defines the expected test MSE at $ x_0 $, and refers to the average test MSE that we would obtain if we repeatedly estimated $ f $ using a large number of training sets, and tested each at $ x_0 $. The overall expected test MSE can be computed by averaging $ E \left[ (y_0 - \hat{f}(x_0))^2 \right] $ over all possible values of $ x_0 $ in the test set.
+
+In order to minimize the expected test error, we need to select a statistical learning method that simultaneously achieves low variance and low bias. Note that variance is inherently a nonnegative quantity, and squared bias is also nonnegative. Hence, we see that the expected test MSE can never lie below  $ \text{Var}(\epsilon) $, the irreducible error from (2.3).
+
+What do we mean by the variance and bias of a statistical learning method? Variance refers to the amount by which $ \hat{f} $ would change if we estimated it using a different training data set. Since the training data are used to fit the statistical learning method, different training data sets will result in a different $ \hat{f} $. But ideally, the estimate for $ f $ should not vary too much between training sets. However, if a method has high variance, then small changes in the training data can result in large changes in $ \hat{f} $. In general, more flexible statistical methods have higher variance. Consider the green and orange curves in Figure 2.9. The flexible green curve is following the observations very closely. It has high variance because changing any one of these data points may cause the estimate $ \hat{f} $ to change considerably. In contrast, the orange least squares line is relatively inflexible and has low variance, because moving any single observation will likely cause only a small shift in the position of the line.
+
+On the other hand, bias refers to the error that is introduced by approximating a real-life problem, which may be extremely complicated, by a much simpler model. For example, linear regression assumes that there is a linear relationship between $ Y $ and $ X_1, X_2, \ldots, X_p $. It is unlikely that any real-life problem truly has such a simple linear relationship, and so performing linear regression will undoubtedly result in some bias in the estimate of $ f $. In Figure 2.11, the true $ f $ is substantially non-linear, so no matter how many training observations we are given, it will not be possible to produce an accurate estimate using linear regression. In other words, linear regression results in high bias in this example. However, in Figure 2.10 the true $ f $ is very close to linear, and so given enough data, it should be possible for linear regression to produce an accurate estimate. Generally, more flexible methods result in less bias.
+
+As a general rule, as we use more flexible methods, the variance will increase and the bias will decrease. The relative rate of change of these two quantities determines whether the test MSE increases or decreases. As we increase the flexibility of a class of methods, the bias tends to initially decrease faster than the variance increases. Consequently, the expected test MSE declines. However, at some point increasing flexibility has little impact on the bias but starts to significantly increase the variance. When this happens the test MSE increases. Note that we observed this pattern of decreasing test MSE followed by increasing test MSE in the right-hand panels of Figures 2.9–2.11.
+
+| Example 1                                                                                                                                                                                                                                                                                                                                                                                        | Example 2                                                                                                                       | Example 3                                                                                                            |
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| ![img_6.png](figs/3/img_6.png)                                                                                                                                                                                                                                                                                                                                                                   | ![img_7.png](figs/3/img_7.png)                                                                                                  | ![img_8.png](figs/3/img_8.png)                                                                                       |
+| Left: Data simulated from f, shown in black. Three estimates of f are shown: the linear regression line (orange curve), and two smoothing spline fts (blue and green curves). Right: Training MSE (grey curve), test MSE (red curve), and minimum possible test MSE over all methods (dashed line). Squares represent the training and test MSEs for the three fts shown in the left-hand panel. | Using a different true f that is much closer to linear. In this setting, linear regression provides a very good ft to the data. | Using a different f that is far from linear. In this setting, linear regression provides a very poor ft to the data. |
+
+![img_5.png](figs/3/img_5.png)
+
+The three plots in  illustrate the examples 1-3. In each case, the blue solid curve represents the squared bias, for different levels of flexibility, while the orange curve corresponds to the variance. The horizontal dashed line represents $ \text{Var}(\epsilon) $, the irreducible error. Finally, the red curve, corresponding to the test set MSE, is the sum of these three quantities. In all three cases, the variance increases and the bias decreases as the method’s flexibility increases. However, the flexibility level corresponding to the optimal test MSE differs considerably among the three data sets, because the squared bias and variance change at different rates in each of the data sets. In the left-hand panel of Figure 2.12, the bias initially decreases rapidly, resulting in an initial sharp decrease in the expected test MSE. On the other hand, in the center panel of Figure the true $ f $ is close to linear, so there is only a small decrease in bias as flexibility increases, and the test MSE only declines slightly before increasing rapidly as the variance increases. Finally, in the right-hand panel of Figure, as flexibility increases, there is a dramatic decline in bias because the true $ f $ is very non-linear. There is also very little increase in variance as flexibility increases. Consequently, the test MSE declines substantially before experiencing a small increase as model flexibility increases.
+
+The relationship between bias, variance, and test set MSE given in Equation and displayed in Figure is referred to as the bias-variance trade-off. Good test set performance of a statistical learning method requires low variance as well as low squared bias. This is referred to as a trade-off because it is easy to obtain a method with extremely low bias but high variance (for instance, by drawing a curve that passes through every single training observation) or a method with very low variance but high bias (by fitting a horizontal line to the data). The challenge lies in finding a method for which both the variance and the squared bias are low. This trade-off is one of the most important recurring themes in this book.
+
+In a real-life situation in which $ f $ is unobserved, it is generally not possible to explicitly compute the test MSE, bias, or variance for a statistical learning method. Nevertheless, one should always keep the bias-variance trade-off in mind. In this book, we explore methods that are extremely flexible and hence can essentially eliminate bias. However, this does not guarantee that they will outperform a much simpler method such as linear regression. To take an extreme example, suppose that the true $ f $ is linear. In this situation, linear regression will have no bias, making it very hard for a more flexible method to compete. In contrast, if the true $ f $ is highly non-linear and we have an ample number of training observations, then we may do better using a highly flexible approach.
