@@ -42,7 +42,7 @@ where $\hat{y}$ indicates a prediction of Y on the basis of $X = x$. The hat sym
 
 ### Estimation of the parameters by least squares
 
-Let $\hat{y}_i = \hat{\beta}_0 + \hat{\beta}_1 x_i$ be the prediction for $Y$ based on the $i$th value of $X$. Then $e_i = y_i - \hat{y}_i$ represents the $i$th residual.
+Let $\hat{y}_i = \hat{\beta}_0 + \hat{\beta}_1 x_i$ be the prediction for $Y$ based on the $i$ th value of $X$. Then $e_i = y_i - \hat{y}_i$ represents the $i$ th residual.
 
 We define the residuals sum of squares (RSS) as
 
@@ -56,8 +56,8 @@ $$
 RSS = (y_1 - \hat{\beta}_0 - \hat{\beta}_1 x_1)^2 + (y_2 - \hat{\beta}_0 - \hat{\beta}_1 x_2)^2 + ... + (y_n - \hat{\beta}_0 - \hat{\beta}_1 x_n)^2. 
 $$
 
-
 The least squares approach chooses $\hat{\beta}_0$ and $\hat{\beta}_1$ to minimize the RSS. The minimizing values can be shown to be
+
 $$
 \hat{\beta}_1 = \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^n (x_i - \bar{x})^2},
 $$
@@ -65,6 +65,7 @@ $$
 $$
 \hat{\beta}_0 = \bar{y} - \hat{\beta}_1 \bar{x},
 $$
+
 where $\bar{y} = \frac{1}{n} \sum_{i=1} y_i$ and $\bar{x} = \frac{1}{n} \sum_{i=1} x_i$ are the sample means.
 
 ### Example: advertising data
@@ -133,18 +134,23 @@ Using statistical software, it is easy to compute the probability of observing a
 ### Assessing the Overall Accuracy of the Model
 
 We compute the **Residual Standard Error**
+
 $$
 RSE = \sqrt{\frac{1}{n - 2} RSS} = \sqrt{\frac{1}{n - 2} \sum_{i=1}^n (y_i - \hat{y}_i)^2},
 $$
-where the **residual sum-of-squares** is $RSS = \sum_{i=1}^n (y_i - \hat{y}_i)^2$.
+
+where the **residual sum-of-squares** is $RSS = \sum_{i=1}^n (y_i - \hat{y}_i)^2$ .
 
 **R-squared** or fraction of variance explained is
+
 $$
 R^2 = \frac{TSS - RSS}{TSS} = 1 - \frac{RSS}{TSS},
 $$
+
 where $TSS = \sum_{i=1}^n (y_i - \bar{y})^2$ is the total sum of squares.
 
 It can be shown that in this simple linear regression setting that $R^2 = r^2$, where $r$ is the correlation between $X$ and $Y$:
+
 $$
 r = \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^n (x_i - \bar{x})^2 \sum_{i=1}^n (y_i - \bar{y})^2}}.
 $$
@@ -487,7 +493,7 @@ $$
 p(X) = \frac{e^{\beta_0 + \beta_1 X}}{1 + e^{\beta_0 + \beta_1 X}} 
 $$
 
-where $e \approx 2.71828$ is a mathematical constant (Euler's number). It is easy to see that no matter what values $\beta_0$, $\beta_1$, or $X $take, $p(X)$ will have values between 0 and 1.
+where $e \approx 2.71828$ is a mathematical constant (Euler's number). It is easy to see that no matter what values $\beta_0$, $\beta_1$, or $X $ take, $p(X)$ will have values between 0 and 1.
 
 A bit of rearrangement gives:
 
@@ -618,6 +624,7 @@ In South African data, there are 160 cases, 302 controls — $\tilde{\pi} = 0.35
 With case-control samples, we can estimate the regression parameters $\beta_j$ accurately (if our model is correct); the constant term $\beta_0$ is incorrect.
 
 We can correct the estimated intercept by a simple transformation: 
+
 $$ \hat{\beta}_0^* = \hat{\beta}_0 + \log \left( \frac{\pi}{1 - \pi} \right) - \log \left( \frac{\tilde{\pi}}{1 - \tilde{\pi}} \right) $$
 
 Often cases are rare and we take them all; up to five times that number of controls is sufficient.
@@ -709,7 +716,7 @@ where $\lambda \geq 0$ is a tuning parameter, to be determined separately.
 
 - In the left-hand panel, each curve corresponds to the ridge  regression coefficient estimate for one of the ten variables,  plotted as a function of $\lambda$.
   - The right-hand panel displays the same ridge coefficient estimates as the left-hand panel, but instead of displaying $\lambda$ on the x-axis, we now display $||\hat{\beta}^R_\lambda||_2/||\hat{\beta}^R||_2$, where $\hat{\beta}$  denotes the vector of least squares coefficient estimates.
-- The notation $||\hat{\beta}||_2 $denotes the $\ell_2$ norm (pronounced “ell 2”) of a vector, and is defined as $||\hat{\beta}||_2 = \sqrt{\sum_{j=1}^p \beta_j^2}$.
+- The notation $||\hat{\beta}||_2$ denotes the $\ell_2$ norm (pronounced “ell 2”) of a vector, and is defined as $||\hat{\beta}||_2 = \sqrt{\sum_{j=1}^p \beta_j^2}$ .
 
 ### Standardizing the Variables
 
@@ -775,10 +782,10 @@ We have established that when inference is the goal, there are clear advantages 
 
 # The Bias-Variance Trade-Of
 
-Though the mathematical proof is beyond the scope of this book, it is possible to show that the expected test MSE, for a given value$ x_0$, can always be decomposed into the sum of three fundamental quantities: the variance of$ \hat{f}(x_0)$, the squared bias of$ \hat{f}(x_0)$, and the variance of the error terms$ \epsilon$. That is,
+Though the mathematical proof is beyond the scope of this book, it is possible to show that the expected test MSE, for a given value $x_0$, can always be decomposed into the sum of three fundamental quantities: the variance of $\hat{f}(x_0)$, the squared bias of $\hat{f}(x_0)$, and the variance of the error terms $\epsilon$. That is,
 
 $$
-E \left[ (y_0 - \hat{f}(x_0))^2 \right] = \text{Var}(\hat{f}(x_0)) + [\text{Bias}(\hat{f}(x_0))]^2 + \text{Var}(\epsilon). \quad (2.7)
+E \left[ (y_0 - \hat{f}(x_0))^2 \right] = \text{Var}(\hat{f}(x_0)) + [\text{Bias}(\hat{f}(x_0))]^2 + \text{Var}(\epsilon)
 $$
 
 Here the notation $E \left[ (y_0 - \hat{f}(x_0))^2 \right]$ defines the expected test MSE at $x_0$, and refers to the average test MSE that we would obtain if we repeatedly estimated $f$ using a large number of training sets, and tested each at $x_0$. The overall expected test MSE can be computed by averaging $E \left[ (y_0 - \hat{f}(x_0))^2 \right]$ over all possible values of $x_0$ in the test set.
