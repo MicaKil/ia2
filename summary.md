@@ -3,7 +3,7 @@
 Linear regression is a simple approach to supervised learning. It assumes that the dependence of Y on $X_1, X_2, ..., X_p$ is linear. 
 - True regression functions are never linear!
 
-![img.png](figs/img.png)
+![img.png](figs/1/img.png)
 
 - Although it may seem overly simplistic, linear regression is extremely useful both conceptually and practically.
 
@@ -20,7 +20,7 @@ Questions we might ask:
 - Is the relationship linear?
 - Is there synergy among the advertising media?
 
-![img_1.png](figs/img_1.png)
+![img_1.png](figs/1/img_1.png)
 
 ## Simple linear regression using a single predictor X.
 
@@ -69,7 +69,7 @@ where $\bar{y} = \frac{1}{n} \sum_{i=1} y_i$ and $\bar{x} = \frac{1}{n} \sum_{i=
 
 ### Example: advertising data
 
-![img_2.png](figs/img_2.png)
+![img_2.png](figs/1/img_2.png)
 
 For the Advertising data, the least squares fit for the regression of sales onto TV is shown. The fit is found by minimizing the sum of squared errors. Each grey line segment represents an error, and the fit makes a compromise by averaging their squares. In this case, a linear fit captures the essence of the relationship, although it is somewhat deficient in the left of the plot.
 
@@ -214,7 +214,7 @@ $$
 
 This is done using standard statistical software. The values $\hat{\beta}_0, \hat{\beta}_1, \ldots, \hat{\beta}_p$ that minimize $RSS$ are the multiple least squares regression coefficient estimates.
 
-![img_3.png](figs/img_3.png)
+![img_3.png](figs/1/img_3.png)
 
 ## Results for Advertising Data
 
@@ -319,7 +319,7 @@ In this situation, given a fixed budget of \$100,000, spending half on radio and
 
 In marketing, this is known as a **synergy** effect, and in statistics, it is referred to as an **interaction** effect.
 
-![img_4.png](figs/img_4.png)
+![img_4.png](figs/1/img_4.png)
 
 ### Modelling Interactions — Advertising Data
 
@@ -399,12 +399,12 @@ $$
 \end{cases}
 $$
 
-![img_5.png](figs/img_5.png)
+![img_5.png](figs/1/img_5.png)
 
 ### Non-linear Effects of Predictors
 
 Polynomial regression on Auto data:
-![img_6.png](figs/img_6.png)
+![img_6.png](figs/1/img_6.png)
 
 The figure suggests that
 
@@ -420,5 +420,221 @@ may provide a better fit.
 | horsepower   | -0.4662     | 0.0311     | -15.0       | < 0.0001 |
 | horsepower^2 | 0.0012      | 0.0001     | 10.1        | < 0.0001 |
 
+# Classification
 
+## Qualitative Variables
 
+Qualitative variables take values in an unordered set $ C $, such as:
+- $ \text{eye color} \in \{ \text{brown}, \text{blue}, \text{green} \} $
+- $ \text{email} \in \{ \text{spam}, \text{ham} \} $
+
+## Classification Task
+
+Given a feature vector $ X $ and a qualitative response $ Y $ taking values in the set $ C $, the classification task is to build a function $ C(X) $ that takes as input the feature vector $ X $ and predicts its value for $ Y $; i.e. $ C(X) \in C $.
+
+## Estimating Probabilities
+
+Often we are more interested in estimating the probabilities that $ X $ belongs to each category in $ C $. For example, it is more valuable to have an estimate of the probability that an insurance claim is fraudulent, than a classification of fraudulent or not.
+
+## Example: Credit Card Default
+
+![img.png](figs/2/img.png)
+
+### Default Classification Task
+
+Suppose for the Default classification task that we code:
+
+$$
+Y =
+\begin{cases} 
+0 & \text{if No} \\
+1 & \text{if Yes}
+\end{cases}
+$$
+
+Can we simply perform a linear regression of $ Y $ on $ X $ and classify as Yes if $ \hat{Y} > 0.5 $?
+
+- In this case of a binary outcome, linear regression does a good job as a classifier and is equivalent to linear discriminant analysis, which we discuss later.
+- Since in the population $ E(Y | X = x) = \Pr(Y = 1 | X = x) $, we might think that regression is perfect for this task.
+- However, linear regression might produce probabilities less than zero or greater than one. Logistic regression is more appropriate.
+
+### Linear versus Logistic Regression
+
+![img_1.png](figs/2/img_1.png)
+
+The orange marks indicate the response $ Y $, either 0 or 1. Linear regression does not estimate $ \Pr(Y = 1 | X) $ well. Logistic regression seems well suited to the task.
+
+Now suppose we have a response variable with three possible values. A patient presents at the emergency room, and we must classify them according to their symptoms.
+
+$$
+Y = 
+\begin{cases} 
+1 & \text{if stroke} \\
+2 & \text{if drug overdose} \\
+3 & \text{if epileptic seizure}
+\end{cases}
+$$
+
+This coding suggests an ordering and in fact implies that the difference between stroke and drug overdose is the same as between drug overdose and epileptic seizure.
+
+Linear regression is not appropriate here. Multiclass Logistic Regression or Discriminant Analysis are more appropriate.
+
+## Logistic Regression
+
+Let's write $p(X) = \Pr(Y = 1|X) $ for short and consider using balance to predict default. Logistic regression uses the form:
+
+$$
+p(X) = \frac{e^{\beta_0 + \beta_1 X}}{1 + e^{\beta_0 + \beta_1 X}} 
+$$
+
+where $e \approx 2.71828 $ is a mathematical constant (Euler's number). It is easy to see that no matter what values $\beta_0 $, $\beta_1 $, or $X $ take, $p(X) $ will have values between 0 and 1.
+
+A bit of rearrangement gives:
+
+$$ 
+\log \left( \frac{p(X)}{1 - p(X)} \right) = \beta_0 + \beta_1 X 
+$$
+
+This monotone transformation is called the **log odds** or **logit** transformation of $p(X) $ (by log we mean natural log: ln).
+
+### Linear versus Logistic Regression
+
+![img_1.png](figs/2/img_1.png)
+
+Logistic regression ensures that our estimate for $p(X) $ lies between 0 and 1.
+
+## Maximum Likelihood
+
+We use maximum likelihood to estimate the parameters.
+
+$$
+ L(\beta_0, \beta_1) = \prod_{i:y_i=1} p(x_i) \prod_{i:y_i=0} (1 - p(x_i)) 
+$$
+
+This **likelihood** gives the probability of the observed zeros and ones in the data. We pick $\beta_0$ and $\beta_1$ to maximize the likelihood of the observed data.
+
+Most statistical packages can fit linear logistic regression models by maximum likelihood. In R, we use the `glm` function.
+
+|           | Coefficient | Std. Error | Z-statistic | P-value  |
+|-----------|-------------|------------|-------------|----------|
+| Intercept | -10.6513    | 0.3612     | -29.5       | < 0.0001 |
+| balance   | 0.0055      | 0.0002     | 24.9        | < 0.0001 |
+
+## Making Predictions
+
+What is our estimated probability of default for someone with a balance of \$1000?
+
+$$
+ \hat{p}(X) = \frac{e^{\hat{\beta}_0 + \hat{\beta}_1 X}}{1 + e^{\hat{\beta}_0 + \hat{\beta}_1 X}} = \frac{e^{-10.6513 + 0.0055 \times 1000}}{1 + e^{-10.6513 + 0.0055 \times 1000}} = 0.006 
+$$
+
+With a balance of \$2000?
+
+$$
+ \hat{p}(X) = \frac{e^{\hat{\beta}_0 + \hat{\beta}_1 X}}{1 + e^{\hat{\beta}_0 + \hat{\beta}_1 X}} = \frac{e^{-10.6513 + 0.0055 \times 2000}}{1 + e^{-10.6513 + 0.0055 \times 2000}} = 0.586 
+$$
+
+### Using Student as the Predictor
+
+|              | Coefficient | Std. Error | Z-statistic | P-value  |
+|--------------|-------------|------------|-------------|----------|
+| Intercept    | -3.5041     | 0.0707     | -49.55      | < 0.0001 |
+| student[Yes] | 0.4049      | 0.1150     | 3.52        | 0.0004   |
+
+$$
+ \widehat{Pr}(\text{default=Yes}|\text{student=Yes}) = \frac{e^{-3.5041 + 0.4049 \times 1}}{1 + e^{-3.5041 + 0.4049 \times 1}} = 0.0431 
+$$
+
+$$
+ \widehat{Pr}(\text{default=Yes}|\text{student=No}) = \frac{e^{-3.5041 + 0.4049 \times 0}}{1 + e^{-3.5041 + 0.4049 \times 0}} = 0.0292 
+$$
+
+## Logistic Regression with Several Variables
+
+$$
+ \log \left( \frac{p(X)}{1 - p(X)} \right) = \beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p 
+$$
+
+$$
+ p(X) = \frac{e^{\beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p}}{1 + e^{\beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p}} 
+$$
+
+|              | Coefficient | Std. Error | Z-statistic | P-value  |
+|--------------|-------------|------------|-------------|----------|
+| Intercept    | -10.8690    | 0.4923     | -22.08      | < 0.0001 |
+| balance      | 0.0057      | 0.0002     | 24.74       | < 0.0001 |
+| income       | 0.0030      | 0.0082     | 0.37        | 0.7115   |
+| student[Yes] | -0.6468     | 0.2362     | -2.74       | 0.0062   |
+
+Why is the coefficient for student negative, while it was positive before?
+
+## Confounding
+
+![img_2.png](figs/2/img_2.png)
+
+- Students tend to have higher balances than non-students, so their marginal default rate is higher than for non-students.
+- But for each level of balance, students default less than non-students.
+- Multiple logistic regression can tease this out.
+
+## Example: South African Heart Disease
+
+- 160 cases of MI (myocardial infarction) and 302 controls (all male in age range 15-64), from Western Cape, South Africa in early 80s.
+- Overall prevalence very high in this region: 5.1%.
+- Measurements on seven predictors (risk factors), shown in scatterplot matrix.
+- Goal is to identify relative strengths and directions of risk factors.
+- This was part of an intervention study aimed at educating the public on healthier diets.
+
+![img_3.png](figs/2/img_3.png)
+
+Scatterplot matrix of the South African Heart Disease data. The response is color coded — The cases (MI) are red, the controls turquoise. `famhist` is a binary variable, with 1 indicating family history of MI.
+
+```r
+> heartfit <- glm(chd ~ ., data = heart, family = binomial)
+> summary(heartfit)
+Call:
+glm(formula = chd ~ ., family = binomial, data = heart)
+
+Coefficients:
+                 Estimate  Std. Error  z value  Pr(>|z|)
+(Intercept)     -4.1295997  0.9641558  -4.283   1.84e-05 ***
+sbp              0.0057607  0.0056326   1.023   0.30643
+tobacco          0.0795256  0.0262150   3.034   0.00242 **
+ldl              0.1847793  0.0574115   3.219   0.00129 **
+famhistPresent   0.9391855  0.2248691   4.177   2.96e-05 ***
+obesity         -0.0345434  0.0291053  -1.187   0.23529
+alcohol          0.0006065  0.0044550   0.136   0.89171
+age              0.0425412  0.0101749   4.181   2.90e-05 ***
+(Dispersion parameter for binomial family taken to be 1)
+
+Null deviance: 596.11 on 461 degrees of freedom
+Residual deviance: 483.17 on 454 degrees of freedom
+AIC: 499.17
+```
+
+## Case-control sampling and logistic regression
+
+In South African data, there are 160 cases, 302 controls — $\tilde{\pi} = 0.35$ are cases. Yet the prevalence of MI in this region is $\pi = 0.05$.
+
+With case-control samples, we can estimate the regression parameters $\beta_j$ accurately (if our model is correct); the constant term $\beta_0$ is incorrect.
+
+We can correct the estimated intercept by a simple transformation: $$ \hat{\beta}_0^* = \hat{\beta}_0 + \log \left( \frac{\pi}{1 - \pi} \right) - \log \left( \frac{\tilde{\pi}}{1 - \tilde{\pi}} \right) $$
+
+Often cases are rare and we take them all; up to five times that number of controls is sufficient.
+
+## Diminishing returns in unbalanced binary data
+
+Sampling more controls than cases reduces the variance of the parameter estimates. But after a ratio of about 5 to 1, the variance reduction flattens out.  
+
+## Logistic regression with more than two classes
+
+So far we have discussed logistic regression with two classes. It is easily generalized to more than two classes. One version (used in the R package glmnet) has the symmetric form: 
+
+$$
+\Pr(Y = k|X) = \frac{e^{\beta_{0k} + \beta_{1k}X_1 + \ldots + \beta_{pk}X_p}}{\sum_{j=1}^K e^{\beta_{0j} + \beta_{1j}X_1 + \ldots + \beta_{pj}X_p}} 
+$$
+
+Here there is a linear function for **each** class. 
+
+(The mathier students will recognize that some cancellation is possible, and only $K - 1$ linear functions are needed as in 2-class logistic regression.) 
+
+Multiclass logistic regression is also referred to as **multinomial regression**.
