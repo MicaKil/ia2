@@ -1,3 +1,89 @@
+<!-- TOC -->
+* [Linear Regression](#linear-regression)
+  * [Linear regression for the advertising data](#linear-regression-for-the-advertising-data)
+  * [Simple linear regression using a single predictor X.](#simple-linear-regression-using-a-single-predictor-x)
+    * [Estimation of the parameters by least squares](#estimation-of-the-parameters-by-least-squares)
+    * [Example: advertising data](#example-advertising-data)
+    * [Assessing the Accuracy of the Coefficient Estimates](#assessing-the-accuracy-of-the-coefficient-estimates)
+    * [Hypothesis testing](#hypothesis-testing)
+    * [Results for the advertising data](#results-for-the-advertising-data)
+    * [Assessing the Overall Accuracy of the Model](#assessing-the-overall-accuracy-of-the-model)
+    * [Advertising data results](#advertising-data-results)
+  * [Multiple Linear Regression](#multiple-linear-regression)
+    * [Interpreting Regression Coefficients](#interpreting-regression-coefficients)
+  * [The Woes of (Interpreting) Regression Coefficients](#the-woes-of-interpreting-regression-coefficients)
+  * [Estimation and Prediction for Multiple Regression](#estimation-and-prediction-for-multiple-regression)
+  * [Results for Advertising Data](#results-for-advertising-data)
+    * [Correlations](#correlations)
+  * [Important Questions](#important-questions)
+  * [Is at Least One Predictor Useful?](#is-at-least-one-predictor-useful)
+  * [Qualitative Predictors with More Than Two Levels](#qualitative-predictors-with-more-than-two-levels)
+  * [Results for Ethnicity](#results-for-ethnicity)
+  * [Extensions of the Linear Model](#extensions-of-the-linear-model)
+    * [Interactions](#interactions)
+    * [Modelling Interactions — Advertising Data](#modelling-interactions--advertising-data)
+    * [Hierarchy](#hierarchy)
+    * [Interactions Between Qualitative and Quantitative Variables](#interactions-between-qualitative-and-quantitative-variables)
+    * [Non-linear Effects of Predictors](#non-linear-effects-of-predictors)
+* [Classification](#classification)
+  * [Qualitative Variables](#qualitative-variables)
+  * [Classification Task](#classification-task)
+  * [Estimating Probabilities](#estimating-probabilities)
+  * [Example: Credit Card Default](#example-credit-card-default)
+    * [Default Classification Task](#default-classification-task)
+    * [Linear versus Logistic Regression](#linear-versus-logistic-regression)
+  * [Logistic Regression](#logistic-regression)
+    * [Linear versus Logistic Regression](#linear-versus-logistic-regression-1)
+  * [Maximum Likelihood](#maximum-likelihood)
+  * [Making Predictions](#making-predictions)
+    * [Using Student as the Predictor](#using-student-as-the-predictor)
+  * [Logistic Regression with Several Variables](#logistic-regression-with-several-variables)
+  * [Confounding](#confounding)
+  * [Example: South African Heart Disease](#example-south-african-heart-disease)
+  * [Case-control sampling and logistic regression](#case-control-sampling-and-logistic-regression)
+  * [Diminishing returns in unbalanced binary data](#diminishing-returns-in-unbalanced-binary-data)
+  * [Logistic regression with more than two classes](#logistic-regression-with-more-than-two-classes)
+* [Linear Model Selection and Regularization](#linear-model-selection-and-regularization)
+  * [Alternatives to Least Squares](#alternatives-to-least-squares)
+    * [Why Consider Alternatives to Least Squares?](#why-consider-alternatives-to-least-squares)
+    * [Three Classes of Methods](#three-classes-of-methods)
+  * [Shrinkage Methods](#shrinkage-methods)
+    * [Ridge Regression and Lasso](#ridge-regression-and-lasso)
+  * [Ridge Regression](#ridge-regression)
+    * [Tuning parameter $\lambda$](#tuning-parameter-lambda)
+    * [Standardizing the Variables](#standardizing-the-variables)
+  * [Why Does Ridge Regression Improve Over Least Squares?](#why-does-ridge-regression-improve-over-least-squares)
+    * [The Bias-Variance Tradeoff](#the-bias-variance-tradeoff)
+  * [The Lasso](#the-lasso)
+  * [Comparing the Lasso and Ridge Regression](#comparing-the-lasso-and-ridge-regression)
+* [Introduction to deep learning for computer vision](#introduction-to-deep-learning-for-computer-vision)
+  * [History](#history)
+  * [The goals of a Convolutional Neural Networks (CNN)](#the-goals-of-a-convolutional-neural-networks-cnn)
+    * [Common Neural Network Approach](#common-neural-network-approach)
+    * [CNN Approach](#cnn-approach)
+  * [Convolutional Neural Networks (CNN)](#convolutional-neural-networks-cnn)
+    * [Locality](#locality)
+    * [Translation invariance](#translation-invariance)
+    * [Spatial Hierarchies of Patterns](#spatial-hierarchies-of-patterns)
+  * [Basic CNN Architecture](#basic-cnn-architecture)
+  * [Convolution](#convolution)
+    * [Common 2D Convolution](#common-2d-convolution)
+    * [Convolutions on RGB image](#convolutions-on-rgb-image)
+  * [Padding](#padding)
+  * [Stride](#stride)
+  * [Pooling](#pooling)
+    * [Max Pooling](#max-pooling)
+  * [CNN example: AlexNet](#cnn-example-alexnet)
+    * [Input Layer](#input-layer)
+    * [Convolutional Layers](#convolutional-layers)
+    * [Fully Connected Layers](#fully-connected-layers)
+    * [Output Layer](#output-layer)
+* [The Trade-Of Between Prediction Accuracy and Model Interpretability](#the-trade-of-between-prediction-accuracy-and-model-interpretability)
+* [The Bias-Variance Trade-Of](#the-bias-variance-trade-of)
+* [Q & A](#q--a)
+<!-- TOC -->
+
+
 # Linear Regression
 
 Linear regression is a simple approach to supervised learning. It assumes that the dependence of Y on $X_1, X_2, ..., X_p$ is linear.
@@ -769,6 +855,325 @@ These two examples illustrate that neither ridge regression nor the lasso will u
 - In general, one might expect the **lasso to perform better** when **the response is a function of only a relatively small number of predictors**.
 - However, the number of predictors that is related to the response is never known a priori for real data sets.
 - A technique such as **cross-validation** can be used in order to **determine which approach is better on a particular data set**.
+
+# Neural Networks
+
+The core building block of neural networks is the **layer**. You can think of a layer as a filter for data: some data goes in, and it comes out in a more useful form. Specifically, **layers extract representations out of the data fed into them**—hopefully, representations that are more meaningful for the problem at hand. 
+
+```python
+from tensorflow import keras
+from tensorflow.keras import layers
+model = keras.Sequential([
+  layers.Dense(512, activation="relu"),
+  layers.Dense(10, activation="softmax")
+])
+```
+
+Here, our model consists of a sequence of two **Dense layers**, which are densely connected(also called **fully connected**) neural layers. The second (and last) layer is a 10-way **softmax classification** layer, which means it will return an array of 10 probability scores (summing to 1). Each score will be the probability that the current digit image belongs to one of our 10 digit classes.
+
+To make the model ready for training, we need to pick three more things as part of the compilation step:
+- An **optimizer** — The mechanism through which the model will update itself based on the training data it sees, so as to improve its performance.
+- A **loss function** — How the model will be able to measure its performance on the training data, and thus how it will be able to steer itself in the right direction.
+- **Metrics** to monitor during training and testing.
+
+## Tensor
+
+At its core, a tensor is a container for data—usually numerical data. So, it’s a container for numbers. You may be already familiar with matrices, which are rank-2 tensors:tensors are a generalization of matrices to an arbitrary number of **dimensions** (note that in the context of tensors, a dimension is often called an **axis**).
+
+### Scalars (rank-0 tensors)
+A tensor that contains only one number is called a **scalar** (or scalar tensor, or **rank-0 tensor**, or 0D tensor). In NumPy, a float32 or float64 number is a scalar tensor (or scalar array).  The number of axes of a tensor is also called its rank.
+
+``` python
+>>> import numpy as np
+>>> x = np.array(12)
+>>> x
+array(12)
+>>> x.ndim
+0
+```
+
+### Vectors (rank-1 tensors)
+An array of numbers is called a **vector**, or **rank-1 tensor**, or 1D tensor. A rank-1 tensor is said to have exactly one axis. Following is a NumPy vector:
+
+```python
+>>> x = np.array([12, 3, 6, 14, 7])
+>>> x
+array([12, 3, 6, 14, 7])
+>>> x.ndim
+1
+```
+
+This vector has five entries and so is called a 5-dimensional vector. A **5D vector** has only one axis and has five dimensions along its axis, whereas a **5D tensor** has five axes (and may have any number of dimensions along each axis). 
+
+**Dimensionality** can denote either the _number of entries_ along a specific axis (as in the case of our 5D vector) or the _number of axes_ in a tensor (such as a 5D tensor), which can be confusing at times. 
+
+## Matrices (rank-2 tensors)
+
+An array of vectors is a matrix, or **rank-2** tensor, or 2D tensor. A matrix has **two axes** (often referred to as rows and columns). 
+```python
+>>> x = np.array([[5, 78, 2, 34, 0],
+[6, 79, 3, 35, 1],
+[7, 80, 4, 36, 2]])
+>>> x.ndim
+2
+```
+
+## Rank-3 and higher-rank tensors
+
+If you pack such matrices in a new array, you obtain a **rank-3 tensor** (or 3D tensor), which you can visually interpret as a cube of numbers. Following is a NumPy rank-3 tensor:
+
+```python
+>>> x = np.array([[[5, 78, 2, 34, 0],
+[6, 79, 3, 35, 1],
+[7, 80, 4, 36, 2]],
+[[5, 78, 2, 34, 0],
+[6, 79, 3, 35, 1],
+[7, 80, 4, 36, 2]],
+[[5, 78, 2, 34, 0],
+[6, 79, 3, 35, 1],
+[7, 80, 4, 36, 2]]])
+>>> x.ndim
+3
+```
+
+By packing rank-3 tensors in an array, you can create a rank-4 tensor, and so on. In deep learning, you’ll generally manipulate tensors with ranks 0 to 4, although you may go up to 5 if you process video data.
+
+## Key attributes
+A tensor is defined by three key attributes:
+- Number of **axes (rank)** — For instance, a rank-3 tensor has three axes, and a matrix has two axes. 
+- **Shape** — This is a tuple of integers that describes how many dimensions the tensor has along each axis. For instance, the previous _matrix_ example has shape(3, 5), and the _rank-3 tensor_ example has shape (3, 3, 5). A _vector_ has a shape with a single element, such as (5,), whereas a _scalar_ has an empty shape, ().
+- **Data type** — This is the type of the data contained in the tensor.
+
+## The notion of data batches
+In general, the first axis (**axis 0**, because indexing starts at 0) in all data tensors you’ll come across in deep learning will be the **samples axis** (sometimes called the samples dimension). In the MNIST example, “samples” are images of digits.
+In addition, deep learning models don’t process an entire dataset at once; rather, they break the data into **small batches**.
+
+## Tensor operations
+
+## Architecture
+
+1. (Artificial) Neural networks are set of algorithms inspired by the functioning of human brian.
+2. Neural networks (NN) are **universal function approximators** so that means neural networks can learn an approximation of any function $f()$ such that, $y = f(x)$
+3. NN learn by example (supervised learning).
+4. Used for regression and classification problems.
+A single neuron
+12
+◎ Input nodes: x1, x2
+◎ Weights: w1, w2.
+◎ Bias: b
+◎ Sum: Σ
+◎ Activation function: f()
+◎ Output: y
+◎ Loss function
+◎ Optimizer
+Step 1: Each input is multiplied by the
+associated weight.
+a = x1* w1 + x2*w2 + b
+Step 2: An activation function f() converts
+the result into the neuron output.
+y = f(a)
+3.
+Activation functions
+13
+Activation functions
+14
+Activation function provides the possibility to learn non-linear functions
+https://www.desmos.com/calculator/plevozbz1o
+Network layers
+15
+Input units: The activity of the input units represents the raw information that is fed into the network.
+Hidden units: The activity of each hidden unit is determined by the activities of the input units and the
+weights on the connections between the input and the hidden units.
+Output units: The behaviour of the output units depends on the activity of the hidden units and the
+weights between the hidden and output units.
+H = σ(X W(1) + b(1))
+O = H W(2) + b(2)
+4.
+Loss functions
+16
+Loss function names
+17
+◎ Objective function: In the context of an optimization algorithm, the function used to
+evaluate a candidate solution (i.e. a set of weights).
+◎ Cost function.
+◎ Loss function... or just loss.
+Types of Loss Functions
+18
+Regression problems: given an input value, the model predicts a corresponding output value .
+MSE (Mean Squared Error):
+Binary classification problems: given an input, the neural network produces a vector of
+probabilities of the input belonging to two pre-set categories
+Logarithmic loss or Cross-Entropy:
+Multi-class classification problems: given an input, the neural network produces a vector of
+probabilities of the input belonging to various pre-set categories
+Softmax
+5.
+Gradient Descent
+19
+Gradient descent
+20
+Most common optimizers:
+Stochastic gradient descent
+Adam
+RMSProp
+21
+6.
+Forward and backward
+propagation
+22
+Forward propagation
+23
+○
+y = W1X + b1
+h = σ(y,a)
+o = W2h + b2
+Loss(o)
+Backward propagation
+24
+○
+y = W1x + b1
+h = σ(y,a)
+o = W2h + b2
+Loss(o)
+∂W1 Loss(o)
+∂b1 Loss(o)
+∂a Loss(o)
+∂W2 Loss(o)
+∂b2 Loss(o)
+25
+y = W1x + b1
+h = σ(y,a)
+o = W2h + b2
+Loss(o)
+∂W1 Loss
+∂b1 Loss
+∂a Loss
+∂W2 Loss
+∂b2 Loss
+∂W1 y
+∂b1 y
+∂y h
+∂a h
+∂h o
+∂W2 o
+∂b2 o
+∂o Loss
+26
+y = W1x + b1
+h = σ(y,a)
+o = W2h + b2
+Loss(o)
+∂W1 Loss
+∂b1 Loss
+∂a Loss
+∂W2 Loss
+∂b2 Loss
+∂W1 y
+∂b1 y
+∂y h
+∂a h
+∂h o
+∂W2 o
+∂b2 o
+∂o Loss
+Chain rule
+27
+g[f(x)]
+∂xg = ∂fg∙∂xf
+28
+y = W1x + b1
+h = σ(y,a)
+o = W2h + b2
+Loss(o)
+∂W1 Loss
+∂b1 Loss
+∂a Loss
+∂W2 Loss
+∂b2 Loss
+∂W1 y
+∂b1 y
+∂y h
+∂a h
+∂h o
+∂W2 o
+∂b2 o
+∂o Loss
+29
+∂W1 Loss = ∂o Loss∙∂h o∙∂y h∙∂W1 y
+∂b1 Loss = ∂o Loss∙∂h o∙∂y h∙∂b1 y
+∂a Loss = ∂o Loss∙∂h o∙∂a h
+∂W2 Loss = ∂o Loss∙∂W2 o
+∂b2 Loss = ∂o Loss∙∂b2 o
+∂W1 y
+∂b1 y
+∂y h
+∂a h
+∂h o
+∂W2 o
+∂b2 o
+∂o Loss
+Chain rule
+30
+∂W1 Loss = ∂o Loss∙∂h o∙∂y h∙∂W1 y
+∂b1 Loss = ∂o Loss∙∂h o∙∂y h∙∂b1 y
+∂a Loss = ∂o Loss∙∂h o∙∂a h
+∂W2 Loss = ∂o Loss∙∂W2 o
+∂b2 Loss = ∂o Loss∙∂b2 o
+y = W1x + b1
+h = σ(y,a)
+o = W2h + b2
+Loss(o)
+Chain rule
+31
+∂W1 Loss = ∂o Loss∙∂h o∙∂y h∙∂W1 y
+∂b1 Loss = ∂o Loss∙∂h o∙∂y h∙∂b1 y
+∂a Loss = ∂o Loss∙∂h o∙∂a h
+∂W2 Loss = ∂o Loss∙∂W2 o
+∂b2 Loss = ∂o Loss∙∂b2 o
+y = W1x + b1
+h = σ(y,a)
+o = W2h + b2
+Loss(o)
+Chain rule
+32
+∂W1 Loss = ∂o Loss∙∂h o∙∂y h∙∂W1 y
+∂b1 Loss = ∂o Loss∙∂h o∙∂y h∙∂b1 y
+∂a Loss = ∂o Loss∙∂h o∙∂a h
+∂W2 Loss = ∂o Loss∙∂W2 o
+∂b2 Loss = ∂o Loss∙∂b2 o
+y = W1x + b1
+h = σ(y,a)
+o = W2h + b2
+Loss(o)
+Chain rule Backpropagation
+33
+∂W1 Loss = ∂o Loss∙∂h o∙∂y h∙∂W1 y
+∂b1 Loss = ∂o Loss∙∂h o∙∂y h∙∂b1 y
+∂a Loss = ∂o Loss∙∂h o∙∂a h
+∂W2 Loss = ∂o Loss∙∂W2 o
+∂b2 Loss = ∂o Loss∙∂b2 o
+y = W1x + b1
+h = σ(y,a)
+o = W2h + b2
+Loss(o)
+Chain rule Backpropagation
+7.
+Deep learning
+Not enough layers!
+35
+Deep learning is just a good name
+36
+Deep learning has become a powerful tool in various domains, including computer vision, natural
+language processing, and speech recognition.
+8.
+Tensors
+37
+Tensor: Data representations for neural networks
+38
+◎ Scalars (rank-0 tensors)
+◎ Vectors (rank-1 tensors)
+◎ Matrices (rank-2 tensors)
+◎ Rank-3 and higher-rank tensors
 
 # Introduction to deep learning for computer vision
 
