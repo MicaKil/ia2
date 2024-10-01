@@ -770,6 +770,180 @@ These two examples illustrate that neither ridge regression nor the lasso will u
 - However, the number of predictors that is related to the response is never known a priori for real data sets.
 - A technique such as **cross-validation** can be used in order to **determine which approach is better on a particular data set**.
 
+# Introduction to deep learning for computer vision
+
+## History
+
+1. Computer vision is the earliest and biggest success story of deep learning.
+2. 1998, LeNet-5 (Yann LeCunn et al., 1989)
+3. 2011, Dan Ciresan wins the ICDAR 2011 Chinese character recognition competition and the IJCNN 2011 German traffic signs recognition competition
+4. 2012, AlexNet (Alex Krizhevsky et al., 2012). Hinton’s group winning the high-profile ImageNet large-scale visual recognition challenge.
+5. In 2013 and 2014, deep learning still faced intense skepticism from many senior computer vision researchers.
+6. It was only in 2016 that it finally became dominant.
+
+## The goals of a Convolutional Neural Networks (CNN)
+
+### Common Neural Network Approach
+
+Dense layers learn **global** patterns in their input feature space.
+
+![img.png](figs/5/img.png)
+
+### CNN Approach
+
+Convolution layers learn **local** patterns—in the case of images, patterns found in small 2D windows of the inputs.
+
+![img_1.png](figs/5/img_1.png)
+
+## Convolutional Neural Networks (CNN)
+
+### Locality
+
+![img_2.png](figs/5/img_2.png)
+
+### Translation invariance
+
+![img_3.png](figs/5/img_3.png)
+
+After learning a certain pattern in the lower-right corner of a picture, a convnet can recognize it anywhere: for example, in the upper-left corner. A densely connected model would have to learn the pattern anew if it appeared at a new location. This makes convnets data-efficient when processing images (because the visual world is fundamentally translation-invariant): they need fewer training samples to learn representations that have generalization power.
+
+### Spatial Hierarchies of Patterns
+
+- A first convolution layer will learn small local patterns such as edges.
+- A second convolution layer will learn larger patterns made of the features of the first layers, and so on.
+
+This allows convnets to efficiently learn increasingly complex and abstract visual concepts, because the visual world is fundamentally spatially hierarchical.
+
+![img_4.png](figs/5/img_4.png)
+
+## Basic CNN Architecture
+
+![img_5.png](figs/5/img_5.png)
+
+## Convolution
+
+2D convolution is a dot product between an image (nxn matrix) and a kernel (3x3).
+
+Convolutions operate over rank-3 tensors called **feature maps**, with two **spatial** axes (height and width) as well as a **depth** axis (also called the **channels** axis). For an RGB  image, the dimension of the depth axis is 3, because the image has three color channels: red, green, and blue. For a black-and-white picture the  depth is 1 (levels of gray). 
+
+The convolution operation extracts patches from its input  feature map and applies the same transformation to all of these patches, producing  an **output feature map**. This output feature map is still a rank-3 tensor: it has a width and a height. Its depth can be arbitrary, because the output depth is a parameter of the layer, and the different channels in that depth axis no longer stand for specific colors as in RGB input; rather, they stand for **filters**. Filters encode specific aspects of the input data: at a high level, a single filter could encode the concept “presence of a face in the input,” for instance.
+
+In the MNIST example, the first convolution layer takes a feature map of size (28, 28, 1) and outputs a feature map of size (26, 26, 32): it computes 32 filters over its input. Each of these 32 output channels contains a 26 × 26 grid of values, which is a**response map** of the filter over the input, indicating the response of that filter pattern at different locations in the input.
+
+![img_13.png](figs/5/img_13.png)
+
+That is what the term feature map means: every dimension in the depth axis is a feature(or filter), and the rank-2 tensor output[:, :, n] is the 2D spatial map of the response of this filter over the input.
+
+Convolutions are defined by two key parameters:
+-  Size of the patches extracted from the inputs—These are typically 3 × 3 or 5 × 5. In the example, they were 3 × 3, which is a common choice.
+- Depth of the output feature map—This is the number of filters computed by the convolution. The example started with a depth of 32 and ended with a depth of 64.
+
+In Keras `Conv2D` layers, these parameters are the first arguments passed to the layer: `Conv2D(output_depth, (window_height, window_width))`.
+
+A convolution works by **sliding** these windows of size 3 × 3 or 5 × 5 over the 3D input feature map, stopping at every possible location, and extracting the 3D patch of surrounding features (shape `(window_height, window_width, input_depth)`). Each such 3D patch is then transformed into a 1D vector of shape `(output_depth,)`, which is done via a tensor product with a learned weight matrix, called the **convolution kernel**— the same kernel is reused across every patch. All of these vectors (one per patch) are then spatially reassembled into a 3D output map of shape `(height, width, output_depth)`. Every spatial location in the output feature map corresponds to the same location in the input feature map (for example, the lower-right corner of the output contains information about the lower-right corner of the input). For instance, with 3 × 3 windows, the vector `output[i, j, :]` comes from the 3D patch `input[i-1:i+1, j-1:j+1, :]`. 
+
+The **output width and height may differ from the input width** and height for two reasons:
+- **Border effects**, which can be countered by padding the input feature map
+- The use of **strides**
+
+![img_6.png](figs/5/img_6.png)
+
+![img_7.png](figs/5/img_7.png)
+
+### Common 2D Convolution
+
+![img_8.png](figs/5/img_8.png)
+
+_Edge detector_
+
+![img_9.png](figs/5/img_9.png)
+
+_Sharpening_
+
+![img_10.png](figs/5/img_10.png)
+
+_Gaussian_
+
+![img_11.png](figs/5/img_11.png)
+
+_Smoothing_
+
+Don’t worry! The CNN will learn the kernels!
+
+### Convolutions on RGB image
+
+![img_12.png](figs/5/img_12.png)
+
+![img_14.png](figs/5/img_14.png)
+
+## Padding
+
+In general, a 2D convolution reduces the size of the image.
+
+![img_17.png](figs/5/img_17.png)
+
+Consider a 5 × 5 feature map (25 tiles total). There are only 9 tiles around which you can center a 3 × 3 window, forming a 3 × 3 grid. Hence, the output feature map will be 3 × 3. It shrinks a little: by exactly two tiles alongside each dimension, in this case. 
+
+![img_18.png](figs/5/img_18.png)
+
+ If you want to get an output feature map with the same spatial dimensions as the input, you can use padding. **Padding** consists of adding an appropriate number of rows and columns on each side of the input feature map so as to make it possible to fit center convolution windows around every input tile. For a **3 × 3 window**, you add one column on the right, one column on the left, one row at the top, and one row at the bottom. For a **5 × 5 window**, you add two rows.
+
+## Stride
+
+Stride is the **number of rows and columns traversed per windows**. In general, a 2D convolution kernel moves 1 row at a time in both directions.
+
+Our description of convolution so far has assumed that the center tiles of the convolution windows are all contiguous. But the **distance between two successive windows** is a parameter of the convolution, called its stride, which defaults to 1. It’s possible to have strided convolutions: convolutions with a stride higher than 1. 
+
+![img_19.png](figs/5/img_19.png)
+
+*Patches  extracted by a 3 × 3 convolution with stride 2 over a 5 × 5 input (without padding).*
+
+Using **stride 2** means the width and height of the feature map are downsampled by a factor of 2 (in addition to any changes induced by border effects). Strided convolutions are rarely used in classification models, but they come in handy for some types of models.
+
+Reasons for stride of 2 vertically and 2 horizontally:
+  - Computational efficiency
+  - Downsampling
+
+![img_16.png](figs/5/img_16.png)
+
+## Pooling
+
+Pooling is image compression to reduce computation.
+
+![img_15.png](figs/5/img_15.png)
+
+### Max Pooling 
+
+The role of max pooling is to aggressively downsample feature maps, much like strided convolutions. Max pooling consists of extracting windows from the input feature maps and outputting the **max value of each channel**. 
+ 
+It’s conceptually similar to convolution, except that instead of transforming local patches via a learned linear transformation (the convolution kernel), they’re **transformed via a hardcoded max tensor operation**. A big difference from convolution is that max pooling is usually done with **2 × 2 windows** and **stride 2**, in order to **downsample the feature maps by a factor of 2**. On the other hand, convolution is typically done with 3 × 3 windows and no stride (stride 1).
+
+In short, the reason to use downsampling is to **reduce the number of feature-map coefficients** to process, as well as to **induce spatial-filter hierarchies** by making successive convolution layers look at increasingly large windows (in terms of the fraction of the original input they cover).
+
+## CNN example: AlexNet
+
+![img_20.png](figs/5/img_20.png)
+
+### Input Layer
+
+AlexNet takes images of the input size of 227x227x3 RGB pixels.
+
+### Convolutional Layers
+
+1. **First Layer**: 96 kernels of size 11×11 with a stride of 4, ReLU activation, and Max Pooling.
+2. **Second Layer**: 256 kernels of size 5x5x48.
+3. **Third Layer**: 384 kernels of size 3x3x256.
+4. **Fourth Layer**: 384 kernels of size 3x3x192.
+5. **Fifth Layer**: 256 kernels of size 3x3x192.
+
+### Fully Connected Layers
+
+The fully connected layers have 4096 neurons each.
+
+### Output Layer
+
+The output layer is a SoftMax layer that outputs probabilities of the 1000 class labels.
+
 # The Trade-Of Between Prediction Accuracy and Model Interpretability
 
 ![img_4.png](figs/3/img_4.png)
