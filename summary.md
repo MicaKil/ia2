@@ -1,6 +1,6 @@
 # Linear Regression
 
-Linear regression is a simple approach to supervised learning. It assumes that the dependence of Y on $X_1, X_2, ..., X_p$ is linear. 
+Linear regression is a simple approach to supervised learning. It assumes that the dependence of Y on $X_1, X_2, ..., X_p$ is linear.
 - True regression functions are never linear!
 
 ![img.png](figs/1/img.png)
@@ -27,7 +27,7 @@ Questions we might ask:
 We assume a model
 
 $$
-Y = \beta_0 + \beta_1 X + \epsilon 
+Y = \beta_0 + \beta_1 X + \epsilon
 $$
 
 where $\beta_0$ and $\beta_1$ are two unknown constants that represent the intercept and slope, also known as coefficients or parameters, and $\epsilon$ is the error term.
@@ -35,7 +35,7 @@ where $\beta_0$ and $\beta_1$ are two unknown constants that represent the inter
 Given some estimates $\hat{\beta_0}$ and $\hat{\beta_1}$ for the model coefficients, we predict future sales using
 
 $$
-\hat{y} = \hat{\beta_0} + \hat{\beta_1}x, 
+\hat{y} = \hat{\beta_0} + \hat{\beta_1}x,
 $$
 
 where $\hat{y}$ indicates a prediction of Y on the basis of $X = x$. The hat symbol denotes an estimated value.
@@ -46,14 +46,14 @@ Let $\hat{y}_i = \hat{\beta}_0 + \hat{\beta}_1 x_i$ be the prediction for $Y$ ba
 
 We define the residuals sum of squares (RSS) as
 
-$$ 
-RSS = e_1^2 + e_2^2 + ... + e_n^2, 
+$$
+RSS = e_1^2 + e_2^2 + ... + e_n^2,
 $$
 
 or equivalently as
 
-$$ 
-RSS = (y_1 - \hat{\beta}_0 - \hat{\beta}_1 x_1)^2 + (y_2 - \hat{\beta}_0 - \hat{\beta}_1 x_2)^2 + ... + (y_n - \hat{\beta}_0 - \hat{\beta}_1 x_n)^2. 
+$$
+RSS = (y_1 - \hat{\beta}_0 - \hat{\beta}_1 x_1)^2 + (y_2 - \hat{\beta}_0 - \hat{\beta}_1 x_2)^2 + ... + (y_n - \hat{\beta}_0 - \hat{\beta}_1 x_n)^2.
 $$
 
 The least squares approach chooses $\hat{\beta}_0$ and $\hat{\beta}_1$ to minimize the RSS. The minimizing values can be shown to be
@@ -194,7 +194,7 @@ Correlations amongst predictors cause problems:
 “Data Analysis and Regression” Mosteller and Tukey 1977:
 - A regression coefficient $\beta_j$ estimates the expected change in $Y$ per unit change in $X_j$, with all other predictors held fixed. But predictors usually change together!
 
-_Example:_ 
+_Example:_
 - $Y$: total amount of change in your pocket;
 - $X_1$: number of coins;
 - $X_2$: number of pennies, nickels, and dimes. By itself, the regression coefficient of $Y$ on $X_2$ will be > 0. But how about with $X_1$ in the model?
@@ -285,8 +285,8 @@ $$
 Then both of these variables can be used in the regression equation, in order to obtain the model
 
 $$
-y_i = \beta_0 + \beta_1x_{i1} + \beta_2x_{i2} + \epsilon_i = 
-\begin{cases} 
+y_i = \beta_0 + \beta_1x_{i1} + \beta_2x_{i2} + \epsilon_i =
+\begin{cases}
 \beta_0 + \beta_1 + \epsilon_i & \text{if } i\text{th person is Asian} \\
 \beta_0 + \beta_2 + \epsilon_i & \text{if } i\text{th person is Caucasian} \\
 \beta_0 + \epsilon_i & \text{if } i\text{th person is AA}
@@ -378,13 +378,13 @@ Consider the Credit data set, and suppose that we wish to predict balance using 
 **Without an interaction term**, the model takes the form
 
 $$
-\text{balance}_i \approx \beta_0 + \beta_1 \times \text{income}_i + 
-\begin{cases} 
+\text{balance}_i \approx \beta_0 + \beta_1 \times \text{income}_i +
+\begin{cases}
 \beta_2 & \text{if } i\text{th person is a student} \\
 0 & \text{if } i\text{th person is not a student}
 \end{cases}
-= \beta_1 \times \text{income}_i + 
-\begin{cases} 
+= \beta_1 \times \text{income}_i +
+\begin{cases}
 \beta_0 + \beta_2 & \text{if } i\text{th person is a student} \\
 \beta_0 & \text{if } i\text{th person is not a student}
 \end{cases}
@@ -393,13 +393,13 @@ $$
 **With interactions**, it takes the form
 
 $$
-\text{balance}_i \approx \beta_0 + \beta_1 \times \text{income}_i + 
-\begin{cases} 
+\text{balance}_i \approx \beta_0 + \beta_1 \times \text{income}_i +
+\begin{cases}
 \beta_2 + \beta_3 \times \text{income}_i & \text{if student} \\
 0 & \text{if not student}
 \end{cases}
-= 
-\begin{cases} 
+=
+\begin{cases}
 (\beta_0 + \beta_2) + (\beta_1 + \beta_3) \times \text{income}_i & \text{if student} \\
 \beta_0 + \beta_1 \times \text{income}_i & \text{if not student}
 \end{cases}
@@ -452,7 +452,7 @@ Suppose for the Default classification task that we code:
 
 $$
 Y =
-\begin{cases} 
+\begin{cases}
 0 & \text{if No} \\
 1 & \text{if Yes}
 \end{cases}
@@ -473,8 +473,8 @@ The orange marks indicate the response $Y$, either 0 or 1. Linear regression doe
 Now suppose we have a response variable with three possible values. A patient presents at the emergency room, and we must classify them according to their symptoms.
 
 $$
-Y = 
-\begin{cases} 
+Y =
+\begin{cases}
 1 & \text{if stroke} \\
 2 & \text{if drug overdose} \\
 3 & \text{if epileptic seizure}
@@ -490,15 +490,15 @@ Linear regression is not appropriate here. Multiclass Logistic Regression or Dis
 Let's write $p(X) = \Pr(Y = 1|X)$ for short and consider using balance to predict default. Logistic regression uses the form:
 
 $$
-p(X) = \frac{e^{\beta_0 + \beta_1 X}}{1 + e^{\beta_0 + \beta_1 X}} 
+p(X) = \frac{e^{\beta_0 + \beta_1 X}}{1 + e^{\beta_0 + \beta_1 X}}
 $$
 
 where $e \approx 2.71828$ is a mathematical constant (Euler's number). It is easy to see that no matter what values $\beta_0$, $\beta_1$, or $X$ take, $p(X)$ will have values between 0 and 1.
 
 A bit of rearrangement gives:
 
-$$ 
-\log \left( \frac{p(X)}{1 - p(X)} \right) = \beta_0 + \beta_1 X 
+$$
+\log \left( \frac{p(X)}{1 - p(X)} \right) = \beta_0 + \beta_1 X
 $$
 
 This monotone transformation is called the **log odds** or **logit** transformation of $p(X)$ (by log we mean natural log: ln).
@@ -514,7 +514,7 @@ Logistic regression ensures that our estimate for $p(X)$ lies between 0 and 1.
 We use maximum likelihood to estimate the parameters.
 
 $$
- L(\beta_0, \beta_1) = \prod_{i:y_i=1} p(x_i) \prod_{i:y_i=0} (1 - p(x_i)) 
+L(\beta_0, \beta_1) = \prod_{i:y_i=1} p(x_i) \prod_{i:y_i=0} (1 - p(x_i))
 $$
 
 This **likelihood** gives the probability of the observed zeros and ones in the data. We pick $\beta_0$ and $\beta_1$ to maximize the likelihood of the observed data.
@@ -531,13 +531,13 @@ Most statistical packages can fit linear logistic regression models by maximum l
 What is our estimated probability of default for someone with a balance of \$1000?
 
 $$
- \hat{p}(X) = \frac{e^{\hat{\beta}_0 + \hat{\beta}_1 X}}{1 + e^{\hat{\beta}_0 + \hat{\beta}_1 X}} = \frac{e^{-10.6513 + 0.0055 \times 1000}}{1 + e^{-10.6513 + 0.0055 \times 1000}} = 0.006 
+\hat{p}(X) = \frac{e^{\hat{\beta}_0 + \hat{\beta}_1 X}}{1 + e^{\hat{\beta}_0 + \hat{\beta}_1 X}} = \frac{e^{-10.6513 + 0.0055 \times 1000}}{1 + e^{-10.6513 + 0.0055 \times 1000}} = 0.006
 $$
 
 With a balance of \$2000?
 
 $$
- \hat{p}(X) = \frac{e^{\hat{\beta}_0 + \hat{\beta}_1 X}}{1 + e^{\hat{\beta}_0 + \hat{\beta}_1 X}} = \frac{e^{-10.6513 + 0.0055 \times 2000}}{1 + e^{-10.6513 + 0.0055 \times 2000}} = 0.586 
+\hat{p}(X) = \frac{e^{\hat{\beta}_0 + \hat{\beta}_1 X}}{1 + e^{\hat{\beta}_0 + \hat{\beta}_1 X}} = \frac{e^{-10.6513 + 0.0055 \times 2000}}{1 + e^{-10.6513 + 0.0055 \times 2000}} = 0.586
 $$
 
 ### Using Student as the Predictor
@@ -548,21 +548,21 @@ $$
 | student[Yes] | 0.4049      | 0.1150     | 3.52        | 0.0004   |
 
 $$
- \widehat{Pr}(\text{default=Yes}|\text{student=Yes}) = \frac{e^{-3.5041 + 0.4049 \times 1}}{1 + e^{-3.5041 + 0.4049 \times 1}} = 0.0431 
+\widehat{Pr}(\text{default=Yes}|\text{student=Yes}) = \frac{e^{-3.5041 + 0.4049 \times 1}}{1 + e^{-3.5041 + 0.4049 \times 1}} = 0.0431
 $$
 
 $$
- \widehat{Pr}(\text{default=Yes}|\text{student=No}) = \frac{e^{-3.5041 + 0.4049 \times 0}}{1 + e^{-3.5041 + 0.4049 \times 0}} = 0.0292 
+\widehat{Pr}(\text{default=Yes}|\text{student=No}) = \frac{e^{-3.5041 + 0.4049 \times 0}}{1 + e^{-3.5041 + 0.4049 \times 0}} = 0.0292
 $$
 
 ## Logistic Regression with Several Variables
 
 $$
- \log \left( \frac{p(X)}{1 - p(X)} \right) = \beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p 
+\log \left( \frac{p(X)}{1 - p(X)} \right) = \beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p
 $$
 
 $$
- p(X) = \frac{e^{\beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p}}{1 + e^{\beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p}} 
+p(X) = \frac{e^{\beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p}}{1 + e^{\beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p}}
 $$
 
 |              | Coefficient | Std. Error | Z-statistic | P-value  |
@@ -623,7 +623,7 @@ In South African data, there are 160 cases, 302 controls — $\tilde{\pi} = 0.35
 
 With case-control samples, we can estimate the regression parameters $\beta_j$ accurately (if our model is correct); the constant term $\beta_0$ is incorrect.
 
-We can correct the estimated intercept by a simple transformation: 
+We can correct the estimated intercept by a simple transformation:
 
 $$ \hat{\beta}_0^* = \hat{\beta}_0 + \log \left( \frac{\pi}{1 - \pi} \right) - \log \left( \frac{\tilde{\pi}}{1 - \tilde{\pi}} \right) $$
 
@@ -631,19 +631,19 @@ Often cases are rare and we take them all; up to five times that number of contr
 
 ## Diminishing returns in unbalanced binary data
 
-Sampling more controls than cases reduces the variance of the parameter estimates. But after a ratio of about 5 to 1, the variance reduction flattens out.  
+Sampling more controls than cases reduces the variance of the parameter estimates. But after a ratio of about 5 to 1, the variance reduction flattens out.
 
 ## Logistic regression with more than two classes
 
-So far we have discussed logistic regression with two classes. It is easily generalized to more than two classes. One version (used in the R package glmnet) has the symmetric form: 
+So far we have discussed logistic regression with two classes. It is easily generalized to more than two classes. One version (used in the R package glmnet) has the symmetric form:
 
 $$
-\Pr(Y = k|X) = \frac{e^{\beta_{0k} + \beta_{1k}X_1 + \ldots + \beta_{pk}X_p}}{\sum_{j=1}^K e^{\beta_{0j} + \beta_{1j}X_1 + \ldots + \beta_{pj}X_p}} 
+\Pr(Y = k|X) = \frac{e^{\beta_{0k} + \beta_{1k}X_1 + \ldots + \beta_{pk}X_p}}{\sum_{j=1}^K e^{\beta_{0j} + \beta_{1j}X_1 + \ldots + \beta_{pj}X_p}}
 $$
 
-Here there is a linear function for **each** class. 
+Here there is a linear function for **each** class.
 
-(The mathier students will recognize that some cancellation is possible, and only $K - 1$ linear functions are needed as in 2-class logistic regression.) 
+(The mathier students will recognize that some cancellation is possible, and only $K - 1$ linear functions are needed as in 2-class logistic regression.)
 
 Multiclass logistic regression is also referred to as **multinomial regression**.
 
@@ -666,12 +666,12 @@ If $n$ (the number of observations) is not much larger than $p$ (the number of v
 By removing irrelevant features — that is, by setting the corresponding coefficient estimates to zero — we can obtain a model that is more easily interpreted. We will present some approaches for automatically performing feature selection.
 
 ### Three Classes of Methods
- 
+
 **Subset Selection**
 
 We identify a subset of the $p$ predictors that we believe to be related to the response. We then fit a model using least squares on the reduced set of variables.
 
-There're $2^p$ possible models, so this is computationally infeasible for large $p$.
+There are $2^p$ possible models, so this is computationally infeasible for large $p$.
 
 **Shrinkage**
 
@@ -706,8 +706,8 @@ where $\lambda \geq 0$ is a tuning parameter, to be determined separately.
 - As with least squares, ridge regression seeks coefficient estimates that fit the data well, by making the RSS small.
 - However, the second term, $\lambda \sum_{j} \beta_j^2$, called a shrinkage penalty, is small when $\beta_1, \ldots, \beta_p$ are close to zero, and so it has the effect of shrinking the estimates of $\beta_j$ towards zero.
 - The **tuning parameter** $\lambda$ serves to control the relative impact of these two terms on the regression coefficient estimates.
-  - $\lambda = 0$: The penalty term has no effect. Ridge regression estimates will be identical to least squares estimates.
-  - $\lambda \to \infty$: The penalty term dominates the criterion, and the ridge regression coefficient estimates will be shrunk towards zero.
+	- $\lambda = 0$: The penalty term has no effect. Ridge regression estimates will be identical to least squares estimates.
+	- $\lambda \to \infty$: The penalty term dominates the criterion, and the ridge regression coefficient estimates will be shrunk towards zero.
 - Selecting a good value for $\lambda$ is critical; cross-validation is used for this.
 
 ### Tuning parameter $\lambda$
@@ -715,7 +715,7 @@ where $\lambda \geq 0$ is a tuning parameter, to be determined separately.
 ![img.png](figs/3/img.png)
 
 - In the left-hand panel, each curve corresponds to the ridge  regression coefficient estimate for one of the ten variables,  plotted as a function of $\lambda$.
-  - The right-hand panel displays the same ridge coefficient estimates as the left-hand panel, but instead of displaying $\lambda$ on the x-axis, we now display $||\hat{\beta}^R_\lambda||_2/||\hat{\beta}^R||_2$, where $\hat{\beta}$  denotes the vector of least squares coefficient estimates.
+	- The right-hand panel displays the same ridge coefficient estimates as the left-hand panel, but instead of displaying $\lambda$ on the x-axis, we now display $||\hat{\beta}^R_\lambda||_2/||\hat{\beta}^R||_2$, where $\hat{\beta}$  denotes the vector of least squares coefficient estimates.
 - The notation $||\hat{\beta}||_2$ denotes the $\ell_2$ norm (pronounced “ell 2”) of a vector, and is defined as $||\hat{\beta}||_2 = \sqrt{\sum_{j=1}^p \beta_j^2}$ .
 
 ### Standardizing the Variables
@@ -748,8 +748,8 @@ $$
 - In statistical parlance, the lasso uses an $\ell_1$ (pronounced “ell 1”) penalty instead of an $\ell_2$ penalty. The $\ell_1$ norm of a coefficient vector $\beta$ is given by $||\beta||_1 = \sum |\beta_j|$.
 
 - As with ridge regression, the lasso shrinks the coefficient estimates towards zero.
-  - However, in the case of the lasso, the $\ell_1$ penalty has the effect of forcing some of the coefficient estimates to be exactly equal to zero when the tuning parameter $\lambda$ is sufficiently large.
-  - Hence, much like best subset selection, the lasso performs **variable selection**.
+	- However, in the case of the lasso, the $\ell_1$ penalty has the effect of forcing some of the coefficient estimates to be exactly equal to zero when the tuning parameter $\lambda$ is sufficiently large.
+	- Hence, much like best subset selection, the lasso performs **variable selection**.
 - We say that the lasso yields **sparse models** — that is, models that involve only a subset of the variables.
 - As in ridge regression, selecting a good value of $\lambda$ for the lasso is critical; cross-validation is again the method of choice.
 
@@ -824,7 +824,7 @@ This allows convnets to efficiently learn increasingly complex and abstract visu
 
 2D convolution is a dot product between an image (nxn matrix) and a kernel (3x3).
 
-Convolutions operate over rank-3 tensors called **feature maps**, with two **spatial** axes (height and width) as well as a **depth** axis (also called the **channels** axis). For an RGB  image, the dimension of the depth axis is 3, because the image has three color channels: red, green, and blue. For a black-and-white picture the  depth is 1 (levels of gray). 
+Convolutions operate over rank-3 tensors called **feature maps**, with two **spatial** axes (height and width) as well as a **depth** axis (also called the **channels** axis). For an RGB  image, the dimension of the depth axis is 3, because the image has three color channels: red, green, and blue. For a black-and-white picture the  depth is 1 (levels of gray).
 
 The convolution operation extracts patches from its input  feature map and applies the same transformation to all of these patches, producing  an **output feature map**. This output feature map is still a rank-3 tensor: it has a width and a height. Its depth can be arbitrary, because the output depth is a parameter of the layer, and the different channels in that depth axis no longer stand for specific colors as in RGB input; rather, they stand for **filters**. Filters encode specific aspects of the input data: at a high level, a single filter could encode the concept “presence of a face in the input,” for instance.
 
@@ -840,7 +840,7 @@ Convolutions are defined by two key parameters:
 
 In Keras `Conv2D` layers, these parameters are the first arguments passed to the layer: `Conv2D(output_depth, (window_height, window_width))`.
 
-A convolution works by **sliding** these windows of size 3 × 3 or 5 × 5 over the 3D input feature map, stopping at every possible location, and extracting the 3D patch of surrounding features (shape `(window_height, window_width, input_depth)`). Each such 3D patch is then transformed into a 1D vector of shape `(output_depth,)`, which is done via a tensor product with a learned weight matrix, called the **convolution kernel**— the same kernel is reused across every patch. All of these vectors (one per patch) are then spatially reassembled into a 3D output map of shape `(height, width, output_depth)`. Every spatial location in the output feature map corresponds to the same location in the input feature map (for example, the lower-right corner of the output contains information about the lower-right corner of the input). For instance, with 3 × 3 windows, the vector `output[i, j, :]` comes from the 3D patch `input[i-1:i+1, j-1:j+1, :]`. 
+A convolution works by **sliding** these windows of size 3 × 3 or 5 × 5 over the 3D input feature map, stopping at every possible location, and extracting the 3D patch of surrounding features (shape `(window_height, window_width, input_depth)`). Each such 3D patch is then transformed into a 1D vector of shape `(output_depth,)`, which is done via a tensor product with a learned weight matrix, called the **convolution kernel**— the same kernel is reused across every patch. All of these vectors (one per patch) are then spatially reassembled into a 3D output map of shape `(height, width, output_depth)`. Every spatial location in the output feature map corresponds to the same location in the input feature map (for example, the lower-right corner of the output contains information about the lower-right corner of the input). For instance, with 3 × 3 windows, the vector `output[i, j, :]` comes from the 3D patch `input[i-1:i+1, j-1:j+1, :]`.
 
 The **output width and height may differ from the input width** and height for two reasons:
 - **Border effects**, which can be countered by padding the input feature map
@@ -882,17 +882,17 @@ In general, a 2D convolution reduces the size of the image.
 
 ![img_17.png](figs/5/img_17.png)
 
-Consider a 5 × 5 feature map (25 tiles total). There are only 9 tiles around which you can center a 3 × 3 window, forming a 3 × 3 grid. Hence, the output feature map will be 3 × 3. It shrinks a little: by exactly two tiles alongside each dimension, in this case. 
+Consider a 5 × 5 feature map (25 tiles total). There are only 9 tiles around which you can center a 3 × 3 window, forming a 3 × 3 grid. Hence, the output feature map will be 3 × 3. It shrinks a little: by exactly two tiles alongside each dimension, in this case.
 
 ![img_18.png](figs/5/img_18.png)
 
- If you want to get an output feature map with the same spatial dimensions as the input, you can use padding. **Padding** consists of adding an appropriate number of rows and columns on each side of the input feature map so as to make it possible to fit center convolution windows around every input tile. For a **3 × 3 window**, you add one column on the right, one column on the left, one row at the top, and one row at the bottom. For a **5 × 5 window**, you add two rows.
+If you want to get an output feature map with the same spatial dimensions as the input, you can use padding. **Padding** consists of adding an appropriate number of rows and columns on each side of the input feature map so as to make it possible to fit center convolution windows around every input tile. For a **3 × 3 window**, you add one column on the right, one column on the left, one row at the top, and one row at the bottom. For a **5 × 5 window**, you add two rows.
 
 ## Stride
 
 Stride is the **number of rows and columns traversed per windows**. In general, a 2D convolution kernel moves 1 row at a time in both directions.
 
-Our description of convolution so far has assumed that the center tiles of the convolution windows are all contiguous. But the **distance between two successive windows** is a parameter of the convolution, called its stride, which defaults to 1. It’s possible to have strided convolutions: convolutions with a stride higher than 1. 
+Our description of convolution so far has assumed that the center tiles of the convolution windows are all contiguous. But the **distance between two successive windows** is a parameter of the convolution, called its stride, which defaults to 1. It’s possible to have strided convolutions: convolutions with a stride higher than 1.
 
 ![img_19.png](figs/5/img_19.png)
 
@@ -901,8 +901,8 @@ Our description of convolution so far has assumed that the center tiles of the c
 Using **stride 2** means the width and height of the feature map are downsampled by a factor of 2 (in addition to any changes induced by border effects). Strided convolutions are rarely used in classification models, but they come in handy for some types of models.
 
 Reasons for stride of 2 vertically and 2 horizontally:
-  - Computational efficiency
-  - Downsampling
+- Computational efficiency
+- Downsampling
 
 ![img_16.png](figs/5/img_16.png)
 
@@ -912,10 +912,10 @@ Pooling is image compression to reduce computation.
 
 ![img_15.png](figs/5/img_15.png)
 
-### Max Pooling 
+### Max Pooling
 
-The role of max pooling is to aggressively downsample feature maps, much like strided convolutions. Max pooling consists of extracting windows from the input feature maps and outputting the **max value of each channel**. 
- 
+The role of max pooling is to aggressively downsample feature maps, much like strided convolutions. Max pooling consists of extracting windows from the input feature maps and outputting the **max value of each channel**.
+
 It’s conceptually similar to convolution, except that instead of transforming local patches via a learned linear transformation (the convolution kernel), they’re **transformed via a hardcoded max tensor operation**. A big difference from convolution is that max pooling is usually done with **2 × 2 windows** and **stride 2**, in order to **downsample the feature maps by a factor of 2**. On the other hand, convolution is typically done with 3 × 3 windows and no stride (stride 1).
 
 In short, the reason to use downsampling is to **reduce the number of feature-map coefficients** to process, as well as to **induce spatial-filter hierarchies** by making successive convolution layers look at increasingly large windows (in terms of the fraction of the original input they cover).
@@ -952,7 +952,7 @@ The output layer is a SoftMax layer that outputs probabilities of the 1000 class
 
 There are several reasons that we might prefer a more restrictive model instead of a very flexible approach. If we are mainly interested in inference, then restrictive models are much more interpretable. For instance, when inference is the goal, the linear model may be a good choice since it will be quite easy to understand the relationship between $Y$ and $X_1, X_2,...,X_p$. In contrast, very flexible approaches, such as the splines and boosting methods, can lead to such complicated estimates of $f$ that it is difficult to understand how any individual predictor is associated with the response.
 
-We have established that when inference is the goal, there are clear advantages to using simple and relatively inflexible statistical learning methods. In some settings, however, we are only interested in prediction, and the interpretability of the predictive model is simply not of interest. For instance, if we seek to develop an algorithm to predict the price of a stock, our sole requirement for the algorithm is that it predict accurately— interpretability is not a concern. In this setting, we might expect that it will be best to use the most flexible model available. Surprisingly, this is not always the case! We will often obtain more accurate predictions using a less flexible method. This phenomenon, which may seem counterintuitive at frst glance, has to do with the potential for overflowing in highly flexible methods. 
+We have established that when inference is the goal, there are clear advantages to using simple and relatively inflexible statistical learning methods. In some settings, however, we are only interested in prediction, and the interpretability of the predictive model is simply not of interest. For instance, if we seek to develop an algorithm to predict the price of a stock, our sole requirement for the algorithm is that it predict accurately— interpretability is not a concern. In this setting, we might expect that it will be best to use the most flexible model available. Surprisingly, this is not always the case! We will often obtain more accurate predictions using a less flexible method. This phenomenon, which may seem counterintuitive at frst glance, has to do with the potential for overflowing in highly flexible methods.
 
 # The Bias-Variance Trade-Of
 
@@ -984,3 +984,73 @@ The three plots in  illustrate the examples 1-3. In each case, the blue solid cu
 The relationship between bias, variance, and test set MSE given in equation and displayed in figure is referred to as the bias-variance trade-off. Good test set performance of a statistical learning method requires low variance as well as low squared bias. This is referred to as a trade-off because it is easy to obtain a method with extremely low bias but high variance (for instance, by drawing a curve that passes through every single training observation) or a method with very low variance but high bias (by fitting a horizontal line to the data). The challenge lies in finding a method for which both the variance and the squared bias are low. This trade-off is one of the most important recurring themes in this book.
 
 In a real-life situation in which $f$ is unobserved, it is generally not possible to explicitly compute the test MSE, bias, or variance for a statistical learning method. Nevertheless, one should always keep the bias-variance trade-off in mind. In this book, we explore methods that are extremely flexible and hence can essentially eliminate bias. However, this does not guarantee that they will outperform a much simpler method such as linear regression. To take an extreme example, suppose that the true $f$ is linear. In this situation, linear regression will have no bias, making it very hard for a more flexible method to compete. In contrast, if the true $f$ is highly non-linear and we have an ample number of training observations, then we may do better using a highly flexible approach.
+
+# Q & A
+
+En el entrenamiento de redes neuronales convolucionales, el problema del gradiente desvaneciente puede afectar el aprendizaje de la red. ¿Qué caracteriza al efecto del gradiente desvaneciente?
+
+Seleccione una:
+1. Los gradientes de las capas más profundas se acercan a cero, dificultando la actualización adecuada de los pesos en estas capas. 
+2. Los gradientes de todas las capas se vuelven exactamente cero, deteniendo completamente el entrenamiento.
+3. Los gradientes de las capas superiores se vuelven extremadamente grandes, lo que provoca actualizaciones de pesos inestables.
+4. Los gradientes en las capas iniciales se vuelven negativos, lo que lleva a pesos negativos en toda Ia red.
+
+En una red neuronal convolucional (CNN), después de aplicar un filtro o kernel a una imagen o capa anterior, se produce un "feature map". ¿Cuál es el principal propósito de este "feature map"?
+
+1. Convertir la imagen original en una representación binaria para facilitar el procesamiento.
+2. Resaltar características específicas de la entrada, como bordes, texturas o patrones.
+3. Reducir inmediatamente la dimensionalidad de la imagen para ahorrar espacio de memoria.
+
+Si estás diseñando una red neuronal para abordar un problema de regresión lineal, ¿cuál de las siguientes afirmaciones sobre la arquitectura de la red es correcta?
+1. La red debe utilizar exclusivamente funciones de activación ReLU en todas las capas, incluida la capa de salida.
+2. La capa de salida debe tener una función de activación softmax.
+3. La red debe contener múltiples capas de salida para representar diferentes
+4. La capa de salida debe tener exactamente una neurona sin función de activación o con una función de activación lineal.
+
+Estás trabajando con una red neuronal convolucional (CNN) y observas que el modelo no está desempeñándose lo suficientemente bien. ¿Cuál de las siguientes acciones podría ayudar a mejorar el desempeño de tu CNN?
+1. Introducir técnicas de aumento de datos para expandir y diversificar el conjunto de entrenamiento.
+2. Reducir al mínimo el número de filtros en las capas convolucionales para acelerar el entrenamiento.
+3. Utilizar únicamente capas completamente conectadas y eliminar las capas convolucionales.
+4. Modificar el tamaño de la imagen de entrada para que coincida exactamente con el tamaño de los kernels.
+
+En el aprendizaje profundo, cuando un modelo presenta "overfitting", ¿qué significa?
+1. EI modelo tiene un rendimiento mediocre tanto en los datos de entrenamiento como en los datos de prueba.
+2. El modelo tiene un rendimiento sobresaliente en los datos de entrenamiento, pero no se desempeña tan bien en datos no vistos o de prueba.
+3. El modelo se entrena demasiado rápido y no necesita regularización.
+4. El modelo es demasiado sencillo y no puede capturar la complejidad subyacente de los datos.
+
+En regresión lineal, el método de regularización Lasso (LI) es utilizado para penalizar modelos complejos. ¿Cuál es una característica distintiva de la regularización Lasso en comparación con otros métodos de regularización, como Ridge (L2)?
+1. Lasso puede llevar algunos coeficientes exactamente a cero, realizando así una selección de características.
+2. Lasso aumenta la multicolinealidad entre las variables independientes.
+3. Lasso siempre prioriza Ia penalización de coeficientes negativos sobre los positivos.
+4. Lasso solo penaliza los coeficientes más grandes, dejando los demás sin cambios.
+
+En el contexto de la regresión, ¿cuál es el propósito principal de la técnica de regularización Ridge?
+1. Reducir la multicolinealidad entre las variables independientes.
+2. Añadir un término de penalización al modelo para prevenir el sobreajuste, penalizando los coeficientes grandes.
+3. Aumentar la varianza del modelo para mejorar su capacidad de generalización.
+4. Minimizar el valor absoluto de los coeficientes a cero para reducir la dimensionalidad.
+
+En el aprendizaje profundo, cuando un modelo presenta "underfitting", ¿qué implica?
+1. El modelo tiene una capacidad excesiva y memoriza los datos de entrenamiento.
+2. EI modelo necesita más capas y neuronas para mejorar su rendimiento.
+3. El modelo se desempeña excepcionalmente bien en datos no vistos o de prueba, pero mal en los datos de entrenamiento.
+4. El modelo es demasiado simple y no logra capturar patrones o relaciones subyacentes en los datos.
+
+En regresión lineal, ¿qué indica el valor de $R^2R$ (coeficiente de determinación) sobre un modelo?
+1. La precisión con la que las variables independientes son seleccionadas.
+2. La varianza total de los errores del modelo.
+3. La proporción de la varianza de la variable dependiente que es predecida a partir de las variables independientes.
+4. La relación entre la media de las variables independientes y dependientes.
+
+En el contexto de la regresión lineal múltiple,  ¿qué es la multicolinealidad?
+1. Es una situación en la que dos o más variables independientes en un modelo de regresión múltiple tienen una alta correlación entre sí.
+2. Es la técnica para maximizar el ajuste del modelo.
+3. Es el valor predicho por el modelo de regresión.
+4. Es cuando las variables independientes tienen una correlación perfecta entre  sí.
+
+En análisis de datos, ¿por qué es importante identificar y manejar los "outliers"?
+1. Porque son siempre errores en los datos y deben ser eliminados.
+2. Porque pueden mejorar la precisión y  relevancia de las conclusiones.
+3. Porque indican que el modelo de análisis es incorrecto.
+4. Porque pueden distorsionar y sesgar los resultados, afectando la validez de las conclusiones.
