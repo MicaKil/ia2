@@ -78,6 +78,8 @@
     * [Función de Pérdida](#función-de-pérdida)
     * [Descenso de Gradiente](#descenso-de-gradiente)
   * [Backpropagation](#backpropagation)
+    * [Ejemplo 1](#ejemplo-1)
+    * [Funciones de Más de Una Variable](#funciones-de-más-de-una-variable)
   * [Layer](#layer)
   * [Tensor](#tensor)
     * [Scalars (rank-0 tensors)](#scalars-rank-0-tensors)
@@ -122,6 +124,8 @@
     * [Modularity, Hierarchy, and Reuse](#modularity-hierarchy-and-reuse)
     * [Residual Connections](#residual-connections)
     * [Batch normalization](#batch-normalization)
+* [⏳ Deep learning for timeseries](#-deep-learning-for-timeseries)
+  * [A temperature-forecasting example](#a-temperature-forecasting-example)
 * [The Trade-Of Between Prediction Accuracy and Model Interpretability](#the-trade-of-between-prediction-accuracy-and-model-interpretability)
 * [The Bias-Variance Trade-Of](#the-bias-variance-trade-of)
 * [Q & A](#q--a)
@@ -785,8 +789,8 @@ La unidad de computación más básica basada en la neurona.
 ![figs/4/Pasted image 20240902184904.png](figs/4/Pasted_image_20240902184904.png)
 
 El perceptrón recibe
-- entradas $X_{1}, \dots, X_{k}$ , 
-	- cada entrada va a tener parámetros **pesos** $W_{1},\dots, W_{k}$ respectivamente; 
+- entradas $X_{1}, \dots, X_{k}$ ,
+	- cada entrada va a tener parámetros **pesos** $W_{1},\dots, W_{k}$ respectivamente;
 - parámetro **sesgo/bias** $b$;
 - y va a tener una salida $y$.
 
@@ -800,7 +804,7 @@ Se define una variable $u$ que representa cuanta información está acumulando e
 
 $$u = X_{1}W_{1} + \dots + X_{k}W_{k} + b$$
 
-Sea $f$ la **función de excitación**, la salida del perceptrón es: 
+Sea $f$ la **función de excitación**, la salida del perceptrón es:
 
 $$y = f(u)$$
 
@@ -830,7 +834,7 @@ $$ReLU(u) = max(0, u)$$
 
 ![ReLU_and_GELU.svg.png](figs/4/ReLU_and_GELU.svg.png)
 
-**ReLU (Rectified Linear Unit)** es una de las funciones de activación más utilizadas en redes neuronales profundas. 
+**ReLU (Rectified Linear Unit)** es una de las funciones de activación más utilizadas en redes neuronales profundas.
 
 *Ventajas de ReLU:*
 
@@ -902,13 +906,13 @@ $h_{1}$ y $h_{2}$ son las salidas de las neuronas.
 ![img_1.png](figs/4/img_1.png)
 
 - **Capa de entrada**: Recibe las entradas y las pasa a la capa oculta.
-  - Cada neurona en la capa de entrada corresponde a una característica de la entrada.
-  - Las entradas son $x_{1}, \dots, x_{k}$.
+	- Cada neurona en la capa de entrada corresponde a una característica de la entrada.
+	- Las entradas son $x_{1}, \dots, x_{k}$.
 - **Capa oculta**: Procesa las entradas y las pasa a la capa de salida.
-  - Cada neurona en la capa oculta toma las salidas de la capa de entrada y las combina para producir una salida.
-  - La salida es $h_{j} = f(\sum_{i} x_{i}W_{ij} + b_{j})$.
+	- Cada neurona en la capa oculta toma las salidas de la capa de entrada y las combina para producir una salida.
+	- La salida es $h_{j} = f(\sum_{i} x_{i}W_{ij} + b_{j})$.
 - **Capa de salida**: Produce la salida final.
-  - La salida es $y = g(\sum_{j} h_{j}U_{j} + c)$.
+	- La salida es $y = g(\sum_{j} h_{j}U_{j} + c)$.
 
 $$\begin{aligned} \vec{h} &= f(\vec{x}W+\vec{b}) \\ y &= g(\vec{h}U+c)\end{aligned}$$
 
@@ -938,14 +942,14 @@ $$\begin{aligned} \vec{h} &= f(\vec{x}W+\vec{b}) \\ \vec{y} &= g(\vec{h}U+\vec{c
 
 ## Teorema Universal de Aproximación (Universal Approximation Theorem)
 
-Sea $f: [0,1]^k \rightarrow [0,1]$ una función continua. Luego para todo $\epsilon > 0$, existe $W$, $\vec{b}$ y $U$ tal que 
+Sea $f: [0,1]^k \rightarrow [0,1]$ una función continua. Luego para todo $\epsilon > 0$, existe $W$, $\vec{b}$ y $U$ tal que
 
 $$ F(\vec{x}) = sigmoid(\vec{x} W + \vec{b}) U $$ cumple
 
 $$|F(\vec{x})-f(\vec{x})| < \epsilon \text{ para todo } \vec{x} \in [0,1]^k$$
 
-- Es muy poderoso, porque dice que una red neuronal con una capa oculta puede aproximar cualquier función continua tanto como se quiera. 
-- El teorema no dice nada de los tamaños ni de los valores de $W$, $\vec{b}$ y $U$. 
+- Es muy poderoso, porque dice que una red neuronal con una capa oculta puede aproximar cualquier función continua tanto como se quiera.
+- El teorema no dice nada de los tamaños ni de los valores de $W$, $\vec{b}$ y $U$.
 - Tampoco te dice nada de la cantidad de neuronas en la capa oculta.
 
 La razón por la que se usa más de una capa oculta en la práctica es que con una capa oculta se necesitan muchas neuronas para aproximar una función. Con más capas ocultas se necesitan menos neuronas.
@@ -956,8 +960,8 @@ El teorema se demostró con una función de activación sigmoidal, pero se gener
 
 Se llaman Multilayer Perceptrons (MLP) o Feedforward-Fully Connected Neural Networks (FNN).
 
-- Se llaman *Feedforward* porque la información fluye de la capa de entrada a la de salida sin ciclos. 
-  - Las redes convolucionales también son feedforward.
+- Se llaman *Feedforward* porque la información fluye de la capa de entrada a la de salida sin ciclos.
+	- Las redes convolucionales también son feedforward.
 - Se llaman *Fully Connected* porque cada neurona en una capa está conectada a todas las neuronas de la capa anterior.
 
 ### Ilustración de una red general profunda
@@ -967,12 +971,12 @@ Se llaman Multilayer Perceptrons (MLP) o Feedforward-Fully Connected Neural Netw
 - $L$ es la cantidad de capas ocultas.
 - $d_{(i)}$ es la cantidad de neuronas en la capa oculta i.
 - $F$ es la cantidad de características (features) de entrada.
-  - La capa de entrada tiene $F$ neuronas.
+	- La capa de entrada tiene $F$ neuronas.
 - $W^{(i)}$ es la matriz de pesos de la capa oculta i.
-  - Tiene dimensiones $(d_{(i-1)}, d_{(i)})$.
+	- Tiene dimensiones $(d_{(i-1)}, d_{(i)})$.
 - $C$ es la cantidad de neuronas en la capa de salida.
-  - $C$ es la cantidad de clases en un problema de clasificación.
-    - En ese caso, la salida de la red es un vector de probabilidades de pertenecer a cada clase.
+	- $C$ es la cantidad de clases en un problema de clasificación.
+		- En ese caso, la salida de la red es un vector de probabilidades de pertenecer a cada clase.
 
 $$\begin{aligned} \vec{h}^{(1)} &= f^{(1)}(\vec{x}W^{(1)}+\vec{b}^{(1)}) \\ \vec{h}^{(2)} &= f^{(2)}(\vec{h}^{(1)}W^{(2)}+\vec{b}^{(2)}) \\ &\dots \\ \vec{h}^{(i)} &= f^{(i)}(\vec{h}^{(i-1)}W^{(i)}+\vec{b}^{(i)}) \\ &\dots \\ \vec{h}^{(L)} &= f^{(L)}(\vec{h}^{(L-1)}W^{(L)}+\vec{b}^{(L)}) \\ \vec{y} &= g(\vec{h}^{(L)}U+\vec{c})\end{aligned}$$
 
@@ -1005,9 +1009,9 @@ La diferencia entre las funciones de activación y la de salida es que en la fun
 Se tiene un conjunto de entrenamiento $\mathcal{D} = \{(x^{(1)}, y^{(1)}), \dots, (x^{(n)}, y^{(n)})\}$.
 
 - En el entrenamiento se usan $X$ y $Y$.
-  - Si tengo este input $x^{(i)}$, espero que la red me de este output $y^{(i)}$.
+	- Si tengo este input $x^{(i)}$, espero que la red me de este output $y^{(i)}$.
 - $\hat{y}^{(i)}$ es la salida de la red.
-  - $\hat{y} = forward(x)$
+	- $\hat{y} = forward(x)$
 
 ### Función de Error
 
@@ -1027,8 +1031,8 @@ $\mathcal{L}$ es la función de pérdida, también llamada **loss**.
 - Cuantifica cuánto se equivoca la red en promedio con respecto a los datos de entrenamiento.
 - Cuando más pequeño es $\mathcal{L}$, mejor es la red.
 - $\mathcal{L}$ es una función de $\theta$ y $\mathcal{D}$.
-  - $\theta = (W^{(1)}, \vec{b}^{(1)}, \dots, W^{(L)}, \vec{b}^{(L)}, U, \vec{c})$
-  - Como los datos van a estar fijos, se puede escribir $\mathcal{L}(\theta)$, ya que solo van a variar los parámetros $\theta$.
+	- $\theta = (W^{(1)}, \vec{b}^{(1)}, \dots, W^{(L)}, \vec{b}^{(L)}, U, \vec{c})$
+	- Como los datos van a estar fijos, se puede escribir $\mathcal{L}(\theta)$, ya que solo van a variar los parámetros $\theta$.
 
 Para obtener el menor valor de $\mathcal{L}$, se necesita encontrar los valores de $\theta$ que minimizan $\mathcal{L}$.
 
@@ -1058,10 +1062,10 @@ En el algoritmo, se calcula el gradiente de la función de pérdida con respecto
 > > $ \hat{\theta} := \hat{\theta} - \lambda \frac{d\mathcal{L}}{d\theta}|_{\hat{\theta}}$
 
 - $\lambda$ es el **learning rate**.
-  - Indica cuánto se mueve en cada paso.
+	- Indica cuánto se mueve en cada paso.
 - No hay garantía de que el algoritmo converja al mínimo global, pero en la práctica funciona bien.
 - Lo más costoso computacionalmente del descenso de gradiente es calcular el gradiente de la función de pérdida con respecto a los parámetros de la red.
-  - Para calcular el gradiente se usa **backpropagation**.
+	- Para calcular el gradiente se usa **backpropagation**.
 
 Al haber más de un parámetro se calcula la derivada parcial de la función de pérdida con respecto a cada parámetro evaluada en los valores actuales de los parámetros.
 
@@ -1077,12 +1081,12 @@ El grafo computacional dice cómo están interactuando las variables en la red.
 
 Características:
 - Es un árbol
-  - Dirigido
-  - Acíclico
-  - Conexo
+	- Dirigido
+	- Acíclico
+	- Conexo
 - Todas las hojas son:
-  - Parámetros de la red (pesos y bias)
-  - Entradas de la red
+	- Parámetros de la red (pesos y bias)
+	- Entradas de la red
 
 El algoritmo utiliza este grafo para calcular la derivada de forma eficiente.
 
@@ -1285,229 +1289,6 @@ $$(a, b, c, d) \cdot (d,) \rightarrow (a, b, c)$$
 $$(a, b, c, d) \cdot (d, e) \rightarrow (a, b, c, e)$$
 
 ## Architecture
-
-1. (Artificial) Neural networks are set of algorithms inspired by the functioning of human brian.
-2. Neural networks (NN) are **universal function approximators** so that means neural networks can learn an approximation of any function $f()$ such that, $y = f(x)$
-3. NN learn by example (supervised learning).
-4. Used for regression and classification problems.
-   A single neuron
-   12
-   ◎ Input nodes: x1, x2
-   ◎ Weights: w1, w2.
-   ◎ Bias: b
-   ◎ Sum: Σ
-   ◎ Activation function: f()
-   ◎ Output: y
-   ◎ Loss function
-   ◎ Optimizer
-   Step 1: Each input is multiplied by the
-   associated weight.
-   a = x1* w1 + x2*w2 + b
-   Step 2: An activation function f() converts
-   the result into the neuron output.
-   y = f(a)
-3.
-Activation functions
-13
-Activation functions
-14
-Activation function provides the possibility to learn non-linear functions
-https://www.desmos.com/calculator/plevozbz1o
-Network layers
-15
-Input units: The activity of the input units represents the raw information that is fed into the network.
-Hidden units: The activity of each hidden unit is determined by the activities of the input units and the
-weights on the connections between the input and the hidden units.
-Output units: The behaviour of the output units depends on the activity of the hidden units and the
-weights between the hidden and output units.
-H = σ(X W(1) + b(1))
-O = H W(2) + b(2)
-4.
-Loss functions
-16
-Loss function names
-17
-◎ Objective function: In the context of an optimization algorithm, the function used to
-evaluate a candidate solution (i.e. a set of weights).
-◎ Cost function.
-◎ Loss function... or just loss.
-Types of Loss Functions
-18
-Regression problems: given an input value, the model predicts a corresponding output value .
-MSE (Mean Squared Error):
-Binary classification problems: given an input, the neural network produces a vector of
-probabilities of the input belonging to two pre-set categories
-Logarithmic loss or Cross-Entropy:
-Multi-class classification problems: given an input, the neural network produces a vector of
-probabilities of the input belonging to various pre-set categories
-Softmax
-5.
-Gradient Descent
-19
-Gradient descent
-20
-Most common optimizers:
-Stochastic gradient descent
-Adam
-RMSProp
-21
-6.
-Forward and backward
-propagation
-22
-Forward propagation
-23
-○
-y = W1X + b1
-h = σ(y,a)
-o = W2h + b2
-Loss(o)
-Backward propagation
-24
-○
-y = W1x + b1
-h = σ(y,a)
-o = W2h + b2
-Loss(o)
-∂W1 Loss(o)
-∂b1 Loss(o)
-∂a Loss(o)
-∂W2 Loss(o)
-∂b2 Loss(o)
-25
-y = W1x + b1
-h = σ(y,a)
-o = W2h + b2
-Loss(o)
-∂W1 Loss
-∂b1 Loss
-∂a Loss
-∂W2 Loss
-∂b2 Loss
-∂W1 y
-∂b1 y
-∂y h
-∂a h
-∂h o
-∂W2 o
-∂b2 o
-∂o Loss
-26
-y = W1x + b1
-h = σ(y,a)
-o = W2h + b2
-Loss(o)
-∂W1 Loss
-∂b1 Loss
-∂a Loss
-∂W2 Loss
-∂b2 Loss
-∂W1 y
-∂b1 y
-∂y h
-∂a h
-∂h o
-∂W2 o
-∂b2 o
-∂o Loss
-Chain rule
-27
-g[f(x)]
-∂xg = ∂fg∙∂xf
-28
-y = W1x + b1
-h = σ(y,a)
-o = W2h + b2
-Loss(o)
-∂W1 Loss
-∂b1 Loss
-∂a Loss
-∂W2 Loss
-∂b2 Loss
-∂W1 y
-∂b1 y
-∂y h
-∂a h
-∂h o
-∂W2 o
-∂b2 o
-∂o Loss
-29
-∂W1 Loss = ∂o Loss∙∂h o∙∂y h∙∂W1 y
-∂b1 Loss = ∂o Loss∙∂h o∙∂y h∙∂b1 y
-∂a Loss = ∂o Loss∙∂h o∙∂a h
-∂W2 Loss = ∂o Loss∙∂W2 o
-∂b2 Loss = ∂o Loss∙∂b2 o
-∂W1 y
-∂b1 y
-∂y h
-∂a h
-∂h o
-∂W2 o
-∂b2 o
-∂o Loss
-Chain rule
-30
-∂W1 Loss = ∂o Loss∙∂h o∙∂y h∙∂W1 y
-∂b1 Loss = ∂o Loss∙∂h o∙∂y h∙∂b1 y
-∂a Loss = ∂o Loss∙∂h o∙∂a h
-∂W2 Loss = ∂o Loss∙∂W2 o
-∂b2 Loss = ∂o Loss∙∂b2 o
-y = W1x + b1
-h = σ(y,a)
-o = W2h + b2
-Loss(o)
-Chain rule
-31
-∂W1 Loss = ∂o Loss∙∂h o∙∂y h∙∂W1 y
-∂b1 Loss = ∂o Loss∙∂h o∙∂y h∙∂b1 y
-∂a Loss = ∂o Loss∙∂h o∙∂a h
-∂W2 Loss = ∂o Loss∙∂W2 o
-∂b2 Loss = ∂o Loss∙∂b2 o
-y = W1x + b1
-h = σ(y,a)
-o = W2h + b2
-Loss(o)
-Chain rule
-32
-∂W1 Loss = ∂o Loss∙∂h o∙∂y h∙∂W1 y
-∂b1 Loss = ∂o Loss∙∂h o∙∂y h∙∂b1 y
-∂a Loss = ∂o Loss∙∂h o∙∂a h
-∂W2 Loss = ∂o Loss∙∂W2 o
-∂b2 Loss = ∂o Loss∙∂b2 o
-y = W1x + b1
-h = σ(y,a)
-o = W2h + b2
-Loss(o)
-Chain rule Backpropagation
-33
-∂W1 Loss = ∂o Loss∙∂h o∙∂y h∙∂W1 y
-∂b1 Loss = ∂o Loss∙∂h o∙∂y h∙∂b1 y
-∂a Loss = ∂o Loss∙∂h o∙∂a h
-∂W2 Loss = ∂o Loss∙∂W2 o
-∂b2 Loss = ∂o Loss∙∂b2 o
-y = W1x + b1
-h = σ(y,a)
-o = W2h + b2
-Loss(o)
-Chain rule Backpropagation
-7.
-Deep learning
-Not enough layers!
-35
-Deep learning is just a good name
-36
-Deep learning has become a powerful tool in various domains, including computer vision, natural
-language processing, and speech recognition.
-8.
-Tensors
-37
-Tensor: Data representations for neural networks
-38
-◎ Scalars (rank-0 tensors)
-◎ Vectors (rank-1 tensors)
-◎ Matrices (rank-2 tensors)
-◎ Rank-3 and higher-rank tensors
 
 # Introduction to deep learning for computer vision
 
@@ -1713,13 +1494,13 @@ A **segmentation mask** is the image-segmentation equivalent of a label: it’s 
 
 ***Strides***
 
-We **downsample by adding strides** to every other convolution layer. We do this because, in the case of image segmentation, we care a lot about the **spatial location** of information in the image, since we need to produce per-pixel target masks as output of the model. 
+We **downsample by adding strides** to every other convolution layer. We do this because, in the case of image segmentation, we care a lot about the **spatial location** of information in the image, since we need to produce per-pixel target masks as output of the model.
 
 When you do 2 × 2 max pooling, you are completely destroying location information within each pooling window:you return one scalar value per window, with zero knowledge of which of the four locations in the windows the value came from. So while **max pooling** layers perform well for **classification tasks**, they would hurt us quite a bit for a segmentation task. **Strided convolutions** do a better job at downsampling feature maps while retaining location information.
 
 ***Conv2DTranspose layer***
 
-We want our final output to have the same shape as the target masks. Therefore, we need to apply a kind of inverse of the transformations we’ve applied so far—something that will **upsample** the feature maps instead of downsampling them. That’s the purpose of the **Conv2DTranspose** layer: you can think of it as a kind of convolution layer that learns to upsample. 
+We want our final output to have the same shape as the target masks. Therefore, we need to apply a kind of inverse of the transformations we’ve applied so far—something that will **upsample** the feature maps instead of downsampling them. That’s the purpose of the **Conv2DTranspose** layer: you can think of it as a kind of convolution layer that learns to upsample.
 
 If you have an input of `shape (100, 100, 64)`, and you run it through the layer `Conv2D(128, 3, strides=2, padding="same")`, you get an output of `shape (50, 50, 128)`. If you run this output through the layer `Conv2DTranspose(64, 3, strides=2, padding="same")`, you get back an output of `shape (100, 100, 64)`, the same as the original.
 
@@ -1729,20 +1510,20 @@ Where the goal is to draw rectangles (called bounding boxes) around objects of i
 
 ## Modern Convnet Architecture Patterns
 
-A model’s “architecture” is the sum of the choices that went into creating it: 
-- which layers to use, 
-- how to configure them, 
-- and in what arrangement to connect them. 
+A model’s “architecture” is the sum of the choices that went into creating it:
+- which layers to use,
+- how to configure them,
+- and in what arrangement to connect them.
 
-These choices define the **hypothesis space of your model**: the space of possible functions that gradient descent can search over, parameterized by the model’s weights. Like feature engineering, a good hypothesis space encodes prior knowledge that you have about the problem at hand and its solution. 
+These choices define the **hypothesis space of your model**: the space of possible functions that gradient descent can search over, parameterized by the model’s weights. Like feature engineering, a good hypothesis space encodes prior knowledge that you have about the problem at hand and its solution.
 
 A good model architecture will **accelerate learning** and will enable your model to **make efficient use of the training data** available, reducing the need for large datasets. A good model architecture is one that **reduces the size of the search space** or otherwise **makes it easier to converge to a good point** of the search space. Just like feature engineering and data curation, model architecture is all about making the **problem simpler for gradient descent to solve**. And remember that gradient descent is a pretty stupid search process, so it needs all the help it can get.
 
 ### Modularity, Hierarchy, and Reuse
 
 MHR formula (modularity-hierarchy-reuse):
-1. structure your amorphous soup of complexity into **modules**, 
-2. organize the modules into a **hierarchy**, and 
+1. structure your amorphous soup of complexity into **modules**,
+2. organize the modules into a **hierarchy**, and
 3. start **reusing** the same modules in multiple places as appropriate (“reuse” is another word for abstraction in this context).
 
 ***VGG16 architecture***
@@ -1763,7 +1544,7 @@ As it happens, **backpropagation** in a sequential deep learning model is pretty
 
 The name of the game is to adjust the parameters of each function in the chain based on the error recorded on the output of f4 (the loss of the model). To adjust f1, you’ll need to percolate error information through f2, f3, and f4. However, each successive function in the chain introduces some amount of noise. If your function chain is too deep, this noise starts overwhelming gradient information, and backpropagation stops working. Your model won’t train at all. This is the **vanishing gradients** problem.
 
-The fix is simple: just **force each function in the chain to be nondestructive**—to **retain a noiseless version of the information** contained in the previous input. The easiest way to implement this is to use a **residual connection**. It’s dead easy: just **add the input of a layer or block of layers back to its output**. The residual connection acts as an information shortcut around destructive or noisy blocks (such as blocks that contain relu activations or dropout layers), enabling error gradient information from early layers to propagate noiselessly through a deep network. 
+The fix is simple: just **force each function in the chain to be nondestructive**—to **retain a noiseless version of the information** contained in the previous input. The easiest way to implement this is to use a **residual connection**. It’s dead easy: just **add the input of a layer or block of layers back to its output**. The residual connection acts as an information shortcut around destructive or noisy blocks (such as blocks that contain relu activations or dropout layers), enabling error gradient information from early layers to propagate noiselessly through a deep network.
 
 ![img_4.png](figs/6/img_4.png)
 
@@ -1783,7 +1564,7 @@ With residual connections, you can build networks of arbitrary depth, without ha
 
 ![img_9.png](figs/6/img_9.png)
 
-Normalization is a broad category of methods that seek to **make different samples seen by a machine learning model more similar to each other**, which **helps the model learn and generalize well to new data**. 
+Normalization is a broad category of methods that seek to **make different samples seen by a machine learning model more similar to each other**, which **helps the model learn and generalize well to new data**.
 
 The **most common** form of data normalization is: centering the data on zero by subtracting the mean from the data, and giving the data a unit standard deviation by dividing the data by its standard deviation. In effect, this makes the **assumption that the data follows a normal (or Gaussian) distribution** and makes sure this distribution is centered and scaled to unit variance:
 
@@ -1797,24 +1578,19 @@ Although the original paper stated that batch normalization operates by “reduc
 
 I would generally recommend placing the previous layer’s activation after the batch normalization layer. Batch normalization will center your inputs on zero, while your relu activation uses zero as a pivot for keeping or dropping activated channels: doing normalization before the activation maximizes the utilization of the relu.
 
-22
-Batch normalization
-23
-In previous examples, data was normalized before feeding it into models.
-normalized_data = (data - np.mean(data, axis=...)) / np.std(data, axis=...)
-Even if the data entering a Dense or Conv2D network has a 0 mean and unit variance, thereʼs
-no reason to expect a priori that this will be the case for the data coming out.
-Layer BatchNormalization in Keras do the job.
-The main effect of batch normalization appears to be that it helps with gradient propagation.
-Batch normalization
-24
-Batch normalization
-25
-Because the normalization step will take care of centering the layerʼs output on zero, the bias
-vector is no longer needed when using BatchNormalization.
-Recommended setup:
-Batch normalization will center your inputs on zero, while your relu activation uses zero as a
-pivot for keeping or dropping activated channels
+# ⏳ Deep learning for timeseries
+
+A **timeseries** can be any data obtained via measurements at regular intervals, like the daily price of a stock, the hourly electricity consumption of a city, or the weekly sales of a store. Working with timeseries involves understanding the dynamics of a system—its periodic cycles, how it trends over time, its regular regime and its sudden spikes.
+
+By far, the most common timeseries-related task is **forecasting**: predicting what will happen next in a series. But there’s actually a wide range of other things you can do with timeseries:
+- **Classification:** Assign one or more categorical labels to a timeseries. For instance, given the timeseries of the activity of a visitor on a website, classify whether the visitor is a bot or a human.
+- **Event detection:** Identify the _occurrence of a specific expected event_ within a  continuous data stream. A particularly useful application is “hotword detection,” where a model monitors an audio stream and detects utterances like “Ok Google” or “Hey Alexa.”
+- **Anomaly detection:** Detect _anything unusual happening within a continuous datastream_. Anomaly detection is typically done via _unsupervised learning_, because you often don’t know what kind of anomaly you’re looking for, so you can’t train on specific anomaly examples.
+
+## A temperature-forecasting example
+
+- All of our code examples will target a single problem: **predicting the temperature 24 hours in the future**, given a timeseries of hourly measurements of quantities.
+- Densely connected networks and convolutional networks aren’t well-equipped to deal with this kind of dataset, while a different kind of **machine learning technique—recurrent neural networks (RNNs)**—really shines on this type of problem.
 
 # The Trade-Of Between Prediction Accuracy and Model Interpretability
 
@@ -1836,11 +1612,11 @@ Here the notation $E \left[ (y_0 - \hat{f}(x_0))^2 \right]$ defines the expected
 
 In order to minimize the expected test error, we need to select a statistical learning method that simultaneously achieves low variance and low bias. Note that variance is inherently a nonnegative quantity, and squared bias is also nonnegative. Hence, we see that the expected test MSE can never lie below  $\text{Var}(\epsilon)$, the irreducible error from (2.3).
 
-What do we mean by the variance and bias of a statistical learning method? Variance refers to the amount by which $\hat{f}$ would change if we estimated it using a different training data set. Since the training data are used to fit the statistical learning method, different training data sets will result in a different $\hat{f}$. But ideally, the estimate for $f$ should not vary too much between training sets. However, if a method has high variance, then small changes in the training data can result in large changes in $\hat{f}$. In general, more flexible statistical methods have higher variance. Consider the green and orange curves in Example 1. The flexible green curve is following the observations very closely. It has high variance because changing any one of these data points may cause the estimate $\hat{f}$ to change considerably. In contrast, the orange least squares line is relatively inflexible and has low variance, because moving any single observation will likely cause only a small shift in the position of the line.
+What do we mean by the variance and bias of a statistical learning method? **Variance** refers to the amount by which $\hat{f}$ would change if we estimated it using a different training data set. Since the training data are used to fit the statistical learning method, different training data sets will result in a different $\hat{f}$. But ideally, the estimate for $f$ should not vary too much between training sets. However, if a method has high variance, then small changes in the training data can result in large changes in $\hat{f}$. In general, **more flexible statistical methods have higher variance**. Consider the green and orange curves in Example 1. The flexible green curve is following the observations very closely. It has high variance because changing any one of these data points may cause the estimate $\hat{f}$ to change considerably. In contrast, the orange least squares line is relatively inflexible and has low variance, because moving any single observation will likely cause only a small shift in the position of the line.
 
-On the other hand, bias refers to the error that is introduced by approximating a real-life problem, which may be extremely complicated, by a much simpler model. For example, linear regression assumes that there is a linear relationship between $Y$ and $X_1, X_2, \ldots, X_p$. It is unlikely that any real-life problem truly has such a simple linear relationship, and so performing linear regression will undoubtedly result in some bias in the estimate of $f$. In Example 3, the true $f$ is substantially non-linear, so no matter how many training observations we are given, it will not be possible to produce an accurate estimate using linear regression. In other words, linear regression results in high bias in this example. However, in Example 2 the true $f$ is very close to linear, and so given enough data, it should be possible for linear regression to produce an accurate estimate. Generally, more flexible methods result in less bias.
+On the other hand, **bias** refers to the error that is introduced by approximating a real-life problem, which may be extremely complicated, by a much simpler model. For example, linear regression assumes that there is a linear relationship between $Y$ and $X_1, X_2, \ldots, X_p$. It is unlikely that any real-life problem truly has such a simple linear relationship, and so performing linear regression will undoubtedly result in some bias in the estimate of $f$. In Example 3, the true $f$ is substantially non-linear, so no matter how many training observations we are given, it will not be possible to produce an accurate estimate using linear regression. In other words, linear regression results in high bias in this example. However, in Example 2 the true $f$ is very close to linear, and so given enough data, it should be possible for linear regression to produce an accurate estimate. Generally, more flexible methods result in less bias.
 
-As a general rule, as we use more flexible methods, the variance will increase and the bias will decrease. The relative rate of change of these two quantities determines whether the test MSE increases or decreases. As we increase the flexibility of a class of methods, the bias tends to initially decrease faster than the variance increases. Consequently, the expected test MSE declines. However, at some point increasing flexibility has little impact on the bias but starts to significantly increase the variance. When this happens the test MSE increases. Note that we observed this pattern of decreasing test MSE followed by increasing test MSE in the right-hand panels of Examples 1-3.
+As a general rule, **as we use more flexible methods, the variance will increase and the bias will decrease**. The relative rate of change of these two quantities determines whether the test MSE increases or decreases. As we increase the flexibility of a class of methods, the bias tends to initially decrease faster than the variance increases. Consequently, the expected test MSE declines. However, at some point increasing flexibility has little impact on the bias but starts to significantly increase the variance. When this happens the test MSE increases. Note that we observed this pattern of decreasing test MSE followed by increasing test MSE in the right-hand panels of Examples 1-3.
 
 | Example 1                                                                                                                                                                                                                                                                                                                                                                                        | Example 2                                                                                                                       | Example 3                                                                                                            |
 |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
