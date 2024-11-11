@@ -2823,6 +2823,97 @@ The decoder internals: you’ll recognize that it looks very similar to the Tran
 
 The fix is simple: we’ll **mask the upper half of the pairwise attention matrix to prevent the model from paying any attention to information from the future—only information** from tokens 0...N in the target sequence should be used when generating target token N+1.
 
+# Large Language Models
+
+A large language model (LLM) is a language model consisting of a neural network with many parameters (billions) trained with immense amounts of texts using self-supervised learning.
+
+LLMs are probabilistic models that attempt to **map the probability of a sequence of words**, given the surrounding context.
+
+## Prompt engineering
+
+![img.png](figs/10/img.png)
+
+### In-context learning (ICL)
+
+In-Context Learning (ICL) is the **model’s ability to perform tasks by interpreting examples directly in the prompt, without changing its underlying parameters.** Essentially, it learns "in context" of what it’s given in real time. For instance, if you provide a model with a series of example question-answer pairs, it may use those examples to predict the answer to a new question in a similar style.
+
+**_Zero-Shot Inference_** refers to the model's capability to **handle tasks it hasn’t been explicitly trained on, without any examples given**. In a zero-shot scenario, you prompt the model with a task (like "translate this sentence to Spanish") without providing any sample translations in the prompt. The model then uses its pre-trained knowledge to infer the correct response.
+
+![img_1.png](figs/10/img_1.png)
+
+![img_2.png](figs/10/img_2.png)
+
+**_One-Shot Inference_**
+
+![img_3.png](figs/10/img_3.png)
+
+**_Few-Shot Inference_**
+
+![img_4.png](figs/10/img_4.png)
+
+![img_5.png](figs/10/img_5.png)
+
+## LLM fine-tuning
+
+![img_6.png](figs/10/img_6.png)
+
+Large Language Model (LLM) fine-tuning is a process that adapts a pre-trained language model (such as GPT) to perform specific tasks or generate responses that align closely with desired outcomes. Fine-tuning modifies the model by training it further on a targeted dataset, allowing it to specialize or improve its responses for particular applications.
+
+![img_7.png](figs/10/img_7.png)
+
+![img_8.png](figs/10/img_8.png)
+
+![img_9.png](figs/10/img_9.png)
+
+### Process
+
+In **Supervised Fine-Tuning** the model is trained with labeled data, where each input has a corresponding correct output, helping the model learn direct associations.
+
+![img_10.png](figs/10/img_10.png)
+
+![img_11.png](figs/10/img_11.png)
+
+![img_12.png](figs/10/img_12.png)
+
+![img_13.png](figs/10/img_13.png)
+
+![img_14.png](figs/10/img_14.png)
+
+## LLM main use cases
+
+- Chatbots and virtual assistants
+- Content generation
+- Transforming (translation, parsing)
+- Editing and proofreading
+- Sentiment analysis and text classification
+- Question answering systems (RAG)
+- Code generation and debugging
+- Summarization
+- Agents
+- Automation!
+
+## Using LLM in applications
+
+![img_15.png](figs/10/img_15.png)
+
+![img_16.png](figs/10/img_16.png)
+
+### Retrieval Augmented Generation (RAG)
+
+Retrieval-Augmented Generation (RAG) is a technique that combines the strengths of information retrieval with the text generation capabilities of large language models. In RAG, a language model is paired with a retrieval system, like a search engine or a database of documents, allowing it to access and incorporate relevant external information to generate more accurate, informed, and up-to-date responses.
+
+![img_17.png](figs/10/img_17.png)
+
+![img_18.png](figs/10/img_18.png)
+
+**How RAG Works:**
+
+- **Retrieval Phase:** When a user provides an input or query, the retrieval system searches through an external knowledge base or set of documents to find the most relevant pieces of information related to the query. This knowledge base can be a structured database, a set of documents, or even the internet.
+- **Augmentation Phase:** The retrieved documents or text snippets are then passed along with the user’s original query to the language model as additional context. This augmentation process helps provide the model with specific, up-to-date information that it might not have learned during training.
+- **Generation Phase:** The language model, with access to this augmented context, generates a response. Since it has relevant information provided directly, the model can produce a more accurate, specific answer that is grounded in external knowledge, rather than relying solely on its internal, pre-trained knowledge.
+
+![img_19.png](figs/10/img_19.png)
+
 # The Bias-Variance Trade-Of
 
 Though the mathematical proof is beyond the scope of this book, it is possible to show that the expected test MSE, for a
