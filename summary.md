@@ -1,159 +1,176 @@
 <!-- TOC -->
 * [Linear Regression](#linear-regression)
-  * [Linear Regression for the Advertising Data](#linear-regression-for-the-advertising-data)
-  * [Simple linear regression using a single predictor X.](#simple-linear-regression-using-a-single-predictor-x)
-    * [Estimation of the parameters by least squares](#estimation-of-the-parameters-by-least-squares)
-    * [Example: advertising data](#example-advertising-data)
-    * [Assessing the Accuracy of the Coefficient Estimates](#assessing-the-accuracy-of-the-coefficient-estimates)
-    * [Hypothesis testing](#hypothesis-testing)
-    * [Results for the advertising data](#results-for-the-advertising-data)
-    * [Assessing the Overall Accuracy of the Model](#assessing-the-overall-accuracy-of-the-model)
-    * [Advertising data results](#advertising-data-results)
-  * [Multiple Linear Regression](#multiple-linear-regression)
-    * [Interpreting Regression Coefficients](#interpreting-regression-coefficients)
-  * [The Woes of (Interpreting) Regression Coefficients](#the-woes-of-interpreting-regression-coefficients)
-  * [Estimation and Prediction for Multiple Regression](#estimation-and-prediction-for-multiple-regression)
-  * [Results for Advertising Data](#results-for-advertising-data)
-    * [Correlations](#correlations)
-  * [Important Questions](#important-questions)
-  * [Is at Least One Predictor Useful?](#is-at-least-one-predictor-useful)
-  * [Qualitative Predictors with More Than Two Levels](#qualitative-predictors-with-more-than-two-levels)
-  * [Results for Ethnicity](#results-for-ethnicity)
-  * [Extensions of the Linear Model](#extensions-of-the-linear-model)
-    * [Interactions](#interactions)
-    * [Modelling Interactions — Advertising Data](#modelling-interactions--advertising-data)
-    * [Hierarchy](#hierarchy)
-    * [Interactions Between Qualitative and Quantitative Variables](#interactions-between-qualitative-and-quantitative-variables)
-    * [Non-linear Effects of Predictors](#non-linear-effects-of-predictors)
+	* [Linear Regression for the Advertising Data](#linear-regression-for-the-advertising-data)
+	* [Simple linear regression using a single predictor X.](#simple-linear-regression-using-a-single-predictor-x)
+		* [Estimation of the parameters by least squares](#estimation-of-the-parameters-by-least-squares)
+		* [Example: advertising data](#example-advertising-data)
+		* [Assessing the Accuracy of the Coefficient Estimates](#assessing-the-accuracy-of-the-coefficient-estimates)
+		* [Hypothesis testing](#hypothesis-testing)
+		* [Results for the advertising data](#results-for-the-advertising-data)
+		* [Assessing the Overall Accuracy of the Model](#assessing-the-overall-accuracy-of-the-model)
+		* [Advertising data results](#advertising-data-results)
+	* [Multiple Linear Regression](#multiple-linear-regression)
+		* [Interpreting Regression Coefficients](#interpreting-regression-coefficients)
+	* [The Woes of (Interpreting) Regression Coefficients](#the-woes-of-interpreting-regression-coefficients)
+	* [Estimation and Prediction for Multiple Regression](#estimation-and-prediction-for-multiple-regression)
+	* [Results for Advertising Data](#results-for-advertising-data)
+		* [Correlations](#correlations)
+	* [Important Questions](#important-questions)
+	* [Is at Least One Predictor Useful?](#is-at-least-one-predictor-useful)
+	* [Qualitative Predictors with More Than Two Levels](#qualitative-predictors-with-more-than-two-levels)
+	* [Results for Ethnicity](#results-for-ethnicity)
+	* [Extensions of the Linear Model](#extensions-of-the-linear-model)
+		* [Interactions](#interactions)
+		* [Modelling Interactions — Advertising Data](#modelling-interactions--advertising-data)
+		* [Hierarchy](#hierarchy)
+		* [Interactions Between Qualitative and Quantitative Variables](#interactions-between-qualitative-and-quantitative-variables)
+		* [Non-linear Effects of Predictors](#non-linear-effects-of-predictors)
 * [Classification](#classification)
-  * [Qualitative Variables](#qualitative-variables)
-  * [Classification Task](#classification-task)
-  * [Estimating Probabilities](#estimating-probabilities)
-  * [Example: Credit Card Default](#example-credit-card-default)
-    * [Default Classification Task](#default-classification-task)
-    * [Linear versus Logistic Regression](#linear-versus-logistic-regression)
-  * [Logistic Regression](#logistic-regression)
-    * [Linear versus Logistic Regression](#linear-versus-logistic-regression-1)
-  * [Maximum Likelihood](#maximum-likelihood)
-  * [Making Predictions](#making-predictions)
-    * [Using Student as the Predictor](#using-student-as-the-predictor)
-  * [Logistic Regression with Several Variables](#logistic-regression-with-several-variables)
-  * [Confounding](#confounding)
-  * [Example: South African Heart Disease](#example-south-african-heart-disease)
-  * [Case-control sampling and logistic regression](#case-control-sampling-and-logistic-regression)
-  * [Diminishing returns in unbalanced binary data](#diminishing-returns-in-unbalanced-binary-data)
-  * [Logistic regression with more than two classes](#logistic-regression-with-more-than-two-classes)
+	* [Qualitative Variables](#qualitative-variables)
+	* [Classification Task](#classification-task)
+	* [Estimating Probabilities](#estimating-probabilities)
+	* [Example: Credit Card Default](#example-credit-card-default)
+		* [Default Classification Task](#default-classification-task)
+		* [Linear versus Logistic Regression](#linear-versus-logistic-regression)
+	* [Logistic Regression](#logistic-regression)
+		* [Linear versus Logistic Regression](#linear-versus-logistic-regression-1)
+	* [Maximum Likelihood](#maximum-likelihood)
+	* [Making Predictions](#making-predictions)
+		* [Using Student as the Predictor](#using-student-as-the-predictor)
+	* [Logistic Regression with Several Variables](#logistic-regression-with-several-variables)
+	* [Confounding](#confounding)
+	* [Example: South African Heart Disease](#example-south-african-heart-disease)
+	* [Case-control sampling and logistic regression](#case-control-sampling-and-logistic-regression)
+	* [Diminishing returns in unbalanced binary data](#diminishing-returns-in-unbalanced-binary-data)
+	* [Logistic regression with more than two classes](#logistic-regression-with-more-than-two-classes)
 * [Linear Model Selection and Regularization](#linear-model-selection-and-regularization)
-  * [Alternatives to Least Squares](#alternatives-to-least-squares)
-    * [Why Consider Alternatives to Least Squares?](#why-consider-alternatives-to-least-squares)
-    * [Three Classes of Methods](#three-classes-of-methods)
-  * [Shrinkage Methods](#shrinkage-methods)
-    * [Ridge Regression and Lasso](#ridge-regression-and-lasso)
-  * [Ridge Regression](#ridge-regression)
-    * [Tuning parameter $\lambda$](#tuning-parameter-lambda)
-    * [Standardizing the Variables](#standardizing-the-variables)
-  * [Why Does Ridge Regression Improve Over Least Squares?](#why-does-ridge-regression-improve-over-least-squares)
-    * [The Bias-Variance Tradeoff](#the-bias-variance-tradeoff)
-  * [The Lasso](#the-lasso)
-  * [Comparing the Lasso and Ridge Regression](#comparing-the-lasso-and-ridge-regression)
+	* [Alternatives to Least Squares](#alternatives-to-least-squares)
+		* [Why Consider Alternatives to Least Squares?](#why-consider-alternatives-to-least-squares)
+		* [Three Classes of Methods](#three-classes-of-methods)
+	* [Shrinkage Methods](#shrinkage-methods)
+		* [Ridge Regression and Lasso](#ridge-regression-and-lasso)
+	* [Ridge Regression](#ridge-regression)
+		* [Tuning parameter $\lambda$](#tuning-parameter-lambda)
+		* [Standardizing the Variables](#standardizing-the-variables)
+	* [Why Does Ridge Regression Improve Over Least Squares?](#why-does-ridge-regression-improve-over-least-squares)
+		* [The Bias-Variance Tradeoff](#the-bias-variance-tradeoff)
+	* [The Lasso](#the-lasso)
+	* [Comparing the Lasso and Ridge Regression](#comparing-the-lasso-and-ridge-regression)
 * [Neural Networks](#neural-networks)
-  * [Perceptrón](#perceptrón)
-    * [Funciones de Activación](#funciones-de-activación)
-      * [Step(u)](#stepu)
-      * [Sigmoid](#sigmoid)
-      * [tanh(u)](#tanhu)
-      * [ReLU](#relu)
-      * [lineal(u)](#linealu)
-  * [Red Neuronal](#red-neuronal)
-    * [Ejemplo](#ejemplo)
-      * [Calcular XOR](#calcular-xor)
-    * [Generalización](#generalización)
-  * [Teorema Universal de Aproximación (Universal Approximation Theorem)](#teorema-universal-de-aproximación-universal-approximation-theorem)
-  * [Redes Neuronales Profundas](#redes-neuronales-profundas)
-    * [Ilustración de una red general profunda](#ilustración-de-una-red-general-profunda)
-    * [Batches](#batches)
-  * [Función de Salida](#función-de-salida)
-  * [Entrenamiento](#entrenamiento)
-    * [Función de Error](#función-de-error)
-    * [Función de Pérdida](#función-de-pérdida)
-    * [Descenso de Gradiente](#descenso-de-gradiente)
-  * [Backpropagation](#backpropagation)
-    * [Ejemplo 1](#ejemplo-1)
-    * [Funciones de Más de Una Variable](#funciones-de-más-de-una-variable)
-  * [Layer](#layer)
-  * [Tensor](#tensor)
-    * [Scalars (rank-0 tensors)](#scalars-rank-0-tensors)
-    * [Vectors (rank-1 tensors)](#vectors-rank-1-tensors)
-    * [Matrices (rank-2 tensors)](#matrices-rank-2-tensors)
-    * [Rank-3 and higher-rank tensors](#rank-3-and-higher-rank-tensors)
-    * [Key attributes](#key-attributes)
-    * [Notion of Data Batches](#notion-of-data-batches)
-  * [Tensor Operations](#tensor-operations)
-    * [Element-wise Operations](#element-wise-operations)
-    * [Broadcasting](#broadcasting)
-    * [Tensor Product](#tensor-product)
-  * [Architecture](#architecture)
+	* [Perceptrón](#perceptrón)
+		* [Funciones de Activación](#funciones-de-activación)
+			* [Step(u)](#stepu)
+			* [Sigmoid](#sigmoid)
+			* [tanh(u)](#tanhu)
+			* [ReLU](#relu)
+			* [lineal(u)](#linealu)
+	* [Red Neuronal](#red-neuronal)
+		* [Ejemplo](#ejemplo)
+			* [Calcular XOR](#calcular-xor)
+		* [Generalización](#generalización)
+	* [Teorema Universal de Aproximación (Universal Approximation Theorem)](#teorema-universal-de-aproximación-universal-approximation-theorem)
+	* [Redes Neuronales Profundas](#redes-neuronales-profundas)
+		* [Ilustración de una red general profunda](#ilustración-de-una-red-general-profunda)
+		* [Batches](#batches)
+	* [Función de Salida](#función-de-salida)
+	* [Entrenamiento](#entrenamiento)
+		* [Función de Error](#función-de-error)
+		* [Función de Pérdida](#función-de-pérdida)
+		* [Descenso de Gradiente](#descenso-de-gradiente)
+	* [Backpropagation](#backpropagation)
+		* [Ejemplo 1](#ejemplo-1)
+		* [Funciones de Más de Una Variable](#funciones-de-más-de-una-variable)
+	* [Layer](#layer)
+	* [Tensor](#tensor)
+		* [Scalars (rank-0 tensors)](#scalars-rank-0-tensors)
+		* [Vectors (rank-1 tensors)](#vectors-rank-1-tensors)
+		* [Matrices (rank-2 tensors)](#matrices-rank-2-tensors)
+		* [Rank-3 and higher-rank tensors](#rank-3-and-higher-rank-tensors)
+		* [Key attributes](#key-attributes)
+		* [Notion of Data Batches](#notion-of-data-batches)
+	* [Tensor Operations](#tensor-operations)
+		* [Element-wise Operations](#element-wise-operations)
+		* [Broadcasting](#broadcasting)
+		* [Tensor Product](#tensor-product)
+	* [Architecture](#architecture)
 * [Introduction to deep learning for computer vision](#introduction-to-deep-learning-for-computer-vision)
-  * [History](#history)
-  * [The goals of a Convolutional Neural Networks (CNN)](#the-goals-of-a-convolutional-neural-networks-cnn)
-    * [Common Neural Network Approach](#common-neural-network-approach)
-    * [CNN Approach](#cnn-approach)
-  * [Convolutional Neural Networks (CNN)](#convolutional-neural-networks-cnn)
-    * [Locality](#locality)
-    * [Translation invariance](#translation-invariance)
-    * [Spatial Hierarchies of Patterns](#spatial-hierarchies-of-patterns)
-  * [Basic CNN Architecture](#basic-cnn-architecture)
-  * [Convolution](#convolution)
-    * [Common 2D Convolution](#common-2d-convolution)
-    * [Convolutions on RGB image](#convolutions-on-rgb-image)
-  * [Padding](#padding)
-  * [Stride](#stride)
-  * [Pooling](#pooling)
-    * [Max Pooling](#max-pooling)
-  * [CNN example: AlexNet](#cnn-example-alexnet)
-    * [Input Layer](#input-layer)
-    * [Convolutional Layers](#convolutional-layers)
-    * [Fully Connected Layers](#fully-connected-layers)
-    * [Output Layer](#output-layer)
+	* [History](#history)
+	* [The goals of a Convolutional Neural Networks (CNN)](#the-goals-of-a-convolutional-neural-networks-cnn)
+		* [Common Neural Network Approach](#common-neural-network-approach)
+		* [CNN Approach](#cnn-approach)
+	* [Convolutional Neural Networks (CNN)](#convolutional-neural-networks-cnn)
+		* [Locality](#locality)
+		* [Translation invariance](#translation-invariance)
+		* [Spatial Hierarchies of Patterns](#spatial-hierarchies-of-patterns)
+	* [Basic CNN Architecture](#basic-cnn-architecture)
+	* [Convolution](#convolution)
+		* [Common 2D Convolution](#common-2d-convolution)
+		* [Convolutions on RGB image](#convolutions-on-rgb-image)
+	* [Padding](#padding)
+	* [Stride](#stride)
+	* [Pooling](#pooling)
+		* [Max Pooling](#max-pooling)
+	* [CNN example: AlexNet](#cnn-example-alexnet)
+		* [Input Layer](#input-layer)
+		* [Convolutional Layers](#convolutional-layers)
+		* [Fully Connected Layers](#fully-connected-layers)
+		* [Output Layer](#output-layer)
 * [Advanced deep learning for computer vision](#advanced-deep-learning-for-computer-vision)
-  * [Computer Vision Tasks](#computer-vision-tasks)
-    * [Image Classification](#image-classification)
-    * [Image Segmentation](#image-segmentation)
-    * [Object Detection](#object-detection)
-  * [Modern Convnet Architecture Patterns](#modern-convnet-architecture-patterns)
-    * [Modularity, Hierarchy, and Reuse](#modularity-hierarchy-and-reuse)
-    * [Residual Connections](#residual-connections)
-    * [Batch normalization](#batch-normalization)
+	* [Computer Vision Tasks](#computer-vision-tasks)
+		* [Image Classification](#image-classification)
+		* [Image Segmentation](#image-segmentation)
+		* [Object Detection](#object-detection)
+	* [Modern Convnet Architecture Patterns](#modern-convnet-architecture-patterns)
+		* [Modularity, Hierarchy, and Reuse](#modularity-hierarchy-and-reuse)
+		* [Residual Connections](#residual-connections)
+		* [Batch normalization](#batch-normalization)
 * [⏳ Deep learning for timeseries](#-deep-learning-for-timeseries)
-  * [Time series properties](#time-series-properties)
-  * [A temperature-forecasting example](#a-temperature-forecasting-example)
-    * [Parsing the data](#parsing-the-data)
-    * [Plotting the temperature timeseries](#plotting-the-temperature-timeseries)
-    * [Preparing the data](#preparing-the-data)
-  * [Recurrent Neural Networks](#recurrent-neural-networks)
-    * [Example](#example)
-    * [A simple RNN in Keras `SimpleRNN`](#a-simple-rnn-in-keras-simplernn)
-  * [Long Short-Term Memory (LSTM)](#long-short-term-memory-lstm)
-  * [Advanced use of recurrent neural networks](#advanced-use-of-recurrent-neural-networks)
-    * [Recurrent dropout](#recurrent-dropout)
-    * [Stacking recurrent layers](#stacking-recurrent-layers)
-    * [Bidirectional RNNs](#bidirectional-rnns)
+	* [Time series properties](#time-series-properties)
+	* [A temperature-forecasting example](#a-temperature-forecasting-example)
+		* [Parsing the data](#parsing-the-data)
+		* [Plotting the temperature timeseries](#plotting-the-temperature-timeseries)
+		* [Preparing the data](#preparing-the-data)
+	* [Recurrent Neural Networks](#recurrent-neural-networks)
+		* [Example](#example)
+		* [A simple RNN in Keras `SimpleRNN`](#a-simple-rnn-in-keras-simplernn)
+	* [Long Short-Term Memory (LSTM)](#long-short-term-memory-lstm)
+	* [Advanced use of recurrent neural networks](#advanced-use-of-recurrent-neural-networks)
+		* [Recurrent dropout](#recurrent-dropout)
+		* [Stacking recurrent layers](#stacking-recurrent-layers)
+		* [Bidirectional RNNs](#bidirectional-rnns)
 * [The Trade-Of Between Prediction Accuracy and Model Interpretability](#the-trade-of-between-prediction-accuracy-and-model-interpretability)
 * [Deep learning for text](#deep-learning-for-text)
-  * [Preparing text data](#preparing-text-data)
-    * [Text standardization](#text-standardization)
-    * [Tokenization](#tokenization)
-    * [Vocabulary Indexing](#vocabulary-indexing)
-    * [Using the TextVectorization layer](#using-the-textvectorization-layer)
-  * [Two approaches for representing groups of words: Sets and sequences](#two-approaches-for-representing-groups-of-words-sets-and-sequences)
-    * [Processing words as a set: The bag-of-words approach](#processing-words-as-a-set-the-bag-of-words-approach)
-    * [Processing words as a sequence: The sequence model approach](#processing-words-as-a-sequence-the-sequence-model-approach)
-    * [Word embeddings](#word-embeddings)
+	* [Preparing text data](#preparing-text-data)
+		* [Text standardization](#text-standardization)
+		* [Tokenization](#tokenization)
+		* [Vocabulary Indexing](#vocabulary-indexing)
+		* [Using the TextVectorization layer](#using-the-textvectorization-layer)
+	* [Two approaches for representing groups of words: Sets and sequences](#two-approaches-for-representing-groups-of-words-sets-and-sequences)
+		* [Processing words as a set: The bag-of-words approach](#processing-words-as-a-set-the-bag-of-words-approach)
+		* [Processing words as a sequence: The sequence model approach](#processing-words-as-a-sequence-the-sequence-model-approach)
+		* [Word embeddings](#word-embeddings)
 * [The Transformer architecture](#the-transformer-architecture)
-  * [Understanding self-attention](#understanding-self-attention)
-    * [Generalized Self-Attention: The Query-Key-Value Mode](#generalized-self-attention-the-query-key-value-mode)
-  * [Multi-head attention](#multi-head-attention)
-  * [The Transformer encoder](#the-transformer-encoder)
+	* [Understanding self-attention](#understanding-self-attention)
+		* [Generalized Self-Attention: The Query-Key-Value Mode](#generalized-self-attention-the-query-key-value-mode)
+	* [Multi-head attention](#multi-head-attention)
+	* [The Transformer encoder](#the-transformer-encoder)
+		* [Using Positional Encoding ro Re-Inject Order Information](#using-positional-encoding-ro-re-inject-order-information)
+	* [When to use sequence models over bag-of-words models](#when-to-use-sequence-models-over-bag-of-words-models)
+	* [Beyond text classification: Sequence-to-sequence learning](#beyond-text-classification-sequence-to-sequence-learning)
+		* [Sequence-to-sequence learning with Transformer](#sequence-to-sequence-learning-with-transformer)
+* [Large Language Models](#large-language-models)
+	* [Prompt engineering](#prompt-engineering)
+		* [In-context learning (ICL)](#in-context-learning-icl)
+	* [LLM fine-tuning](#llm-fine-tuning)
+		* [Process](#process)
+	* [LLM main use cases](#llm-main-use-cases)
+	* [Using LLM in applications](#using-llm-in-applications)
+		* [Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)
+* [Reglas de Asociación](#reglas-de-asociación)
+	* [Supervised and Unsupervised Learning](#supervised-and-unsupervised-learning)
+	* [Reglas de Asociación, Soporte y Confianza](#reglas-de-asociación-soporte-y-confianza)
+		* [Interpretación de las Métricas](#interpretación-de-las-métricas)
+	* [Algoritmo de Descubrimiento](#algoritmo-de-descubrimiento)
 * [The Bias-Variance Trade-Of](#the-bias-variance-trade-of)
 <!-- TOC -->
 
@@ -2758,15 +2775,15 @@ Crucially, the **encoder part can be used for text classification**—it’s a v
 
 ### Using Positional Encoding ro Re-Inject Order Information
 
-The idea behind positional encoding is very simple: to give the model access to word order information, we’re going to **add the word’s position in the sentence to each word embedding**. Our input word embeddings will have two components: 
+The idea behind positional encoding is very simple: to give the model access to word order information, we’re going to **add the word’s position in the sentence to each word embedding**. Our input word embeddings will have two components:
 - the usual **word vector**, which represents the word independently of any specific context, and
-- a **position vector**, which represents the position of the word in the current sentence. 
+- a **position vector**, which represents the position of the word in the current sentence.
 
-The **simplest scheme** you could come up with would be to concatenate the word’s position to its embedding vector. You’d add a “position” axis to the vector and fill it with 0 for the first word in the sequence, 1 for the second, and so on. That may not be ideal, however, because the positions can potentially be very large integers, which will disrupt the range of values in the embedding vector. As you know, neural networks don’t like very large input values, or discrete input distributions. 
+The **simplest scheme** you could come up with would be to concatenate the word’s position to its embedding vector. You’d add a “position” axis to the vector and fill it with 0 for the first word in the sequence, 1 for the second, and so on. That may not be ideal, however, because the positions can potentially be very large integers, which will disrupt the range of values in the embedding vector. As you know, neural networks don’t like very large input values, or discrete input distributions.
 
-The original “Attention is all you need” paper used an interesting trick to encode word positions: it added to the word embeddings a **vector containing values in the range [-1, 1] that varied cyclically depending on the position** (it used cosine functions to achieve this). This trick offers a way to uniquely characterize any integer in a large range via a vector of small values. 
+The original “Attention is all you need” paper used an interesting trick to encode word positions: it added to the word embeddings a **vector containing values in the range [-1, 1] that varied cyclically depending on the position** (it used cosine functions to achieve this). This trick offers a way to uniquely characterize any integer in a large range via a vector of small values.
 
-We’ll do something **simpler and more effective**: we’ll _learn position embedding vectors the same way we learn to embed word indices_. We’ll then proceed to add our position embeddings to the corresponding word embeddings, to obtain a position-aware word embedding. This technique is called “**positional embedding**.” 
+We’ll do something **simpler and more effective**: we’ll _learn position embedding vectors the same way we learn to embed word indices_. We’ll then proceed to add our position embeddings to the corresponding word embeddings, to obtain a position-aware word embedding. This technique is called “**positional embedding**.”
 
 ![img_6.png](figs/9/img_6.png)
 
@@ -2811,7 +2828,7 @@ Sequence-to-sequence learning is the task where Transformer really shines. Neura
 
 You’re already familiar with the **Transformer encoder**, which uses _self-attention to produce context-aware representations of each token_ in an input sequence. In a **sequence-to-sequenc**e Transformer, the Transformer encoder would naturally play the role of the encoder, which _reads the source sequence and produces an encoded representation of it_. Unlike our previous RNN encoder, though, the Transformer encoder _keeps the encoded representation in a sequence format_: it’s a sequence of context-aware embedding vectors.
 
-The second half of the model is the **Transformer decoder**. Just like the RNN decoder, it _reads tokens 0…N in the target sequence and tries to predict token N+1_. Crucially, while doing this, _it uses neural attention to identify which tokens in the encoded source sentence are most closely related to the target token_ it’s currently trying to predict— perhaps not unlike what a human translator would do. 
+The second half of the model is the **Transformer decoder**. Just like the RNN decoder, it _reads tokens 0…N in the target sequence and tries to predict token N+1_. Crucially, while doing this, _it uses neural attention to identify which tokens in the encoded source sentence are most closely related to the target token_ it’s currently trying to predict— perhaps not unlike what a human translator would do.
 
 _THE TRANSFORMER DECODER_
 
@@ -2915,229 +2932,225 @@ Retrieval-Augmented Generation (RAG) is a technique that combines the strengths 
 ![img_19.png](figs/10/img_19.png)
 
 # Reglas de Asociación
-Dr. Jorge Guerra (Jorch)
-jorge.guerra881215@gmail.com
-Problema:
-Supongamos que queremos ayudar a Google en su producto Gmail
-creando una cola con prioridad para la bandeja de entrada. De esta manera
-los correos de entrada se irán ordenando no por orden de llegada sino por
-orden de importancia respecto a cada usuario.
 
-Reglas de
-Asociación
-Regla de asociación:
-Describe una relación de asociación entre los elementos de un conjunto de
-datos relevantes.
-Ejemplos:
-● Estudiantes que cursan Machine Learning tienden a cursar Estadística
-Aplicada
-● Clientes que compran productos lácteos tienden a comprar productos
-panificados.
-● Artículos que referencian a Srikant (1997) citan también a Agrawal.
-(1993).
-Origen: Market Basket Analysis
-Se denomina Canasta de Mercado a una colección de ítems que un
-cliente compra en una misma transacción.
-Problema: identificar el conjunto de ítems que son adquiridos en
-conjunto.
-Intenta identificar reglas de la forma:
-{fideos, queso rallado} -> {salsa}
-{viernes, persona adulta, carne} -> {fernet, coca-cola}
-Definición Reglas de Asociación
-De manera general: X -> Y donde X e Y son conjuntos de ítems del dominio.
-X se denomina el antecedente de la regla donde Y sería su consecuente.
-Definición Reglas de Asociación
-De manera general: X -> Y donde X e Y son conjuntos de ítems del dominio.
-X se denomina el antecedente de la regla donde Y sería su consecuente.
-● Soporte: El soporte para la regla X -> Y es el porciento de las
-transacciones que contienen todos los ítems de X e Y.
-● Confianza: La confianza para la regla X -> Y es el porciento de
-transacciones que contienen Y, entre las transacciones que contienen
-X.
-???
-???
-0,75
-1
-Interpretación de las Métricas
-● Regla de bajo soporte
-○ Puede haber aparecido por casualidad.
-● Regla con baja confianza
-○ Es probable que no exista relación entre antecedentes y
-consecuente
-¿Que diferencia a X -> Y de Y -> X?
-Interpretación de las Métricas
-● Regla de bajo soporte
-○ Puede haber aparecido por casualidad.
-● Regla con baja confianza
-○ Es probable que no exista relación entre antecedentes y
-consecuente
-¿Que diferencia a X -> Y de Y -> X?
-● Tiene el mismo soporte pero distinta confianza
-VS
-Algoritmo de Descubrimiento
-Objetivo
-Encontrar Reglas de Asociación con altos valores de soporte y confianza
-● Umbrales de minsup y minconf definidos por el usuario
-Importante: Encontrar dichas reglas no significa que deba existir una
-relación entre antecedente y consecuente. Por lo tanto, un experto en el
-dominio del problema debería siempre evaluar las reglas.
-I = { i1, i2, …., im } es un conjunto de ítems.
-D es un conjunto de transacciones Tj. Donde cada Tj es
-un conjunto de ítems (subconjunto de I).
+## Supervised and Unsupervised Learning
 
-El descubrimiento de las reglas puede ser descompuesto de
-dos subproblemas:
-1. Encontrar todos los itemsets que tienen el soporte mayor
-que el soporte mínimo (itemsets frecuentes).
-2. Utilizar los itemsets frecuentes para generar las reglas
-deseadas.
-a. Para cada itemsets frecuentes L (k>1), encontrar todos los
-subconjuntos no vacios, y para cada subconjunto {a} generar
-una regla {a}->{L-a} si la confianza es mayor que el minconf.
-i. Para el itemset frecuente {A, B, C}:
-{A}->{BC}, {AB}->{C}, {AC}->{B}, {B}->{AC}, {BC}->{A}, {C}->{AB}
-Algoritmos
-● Apriori y AprioriTid (Agrawal & Srikant,1994)
-● Opus (Webb,1996)
-● Direct Hasing and Pruning (DHP) (Adamo, 2001)
-● Dynamic Set Counting (DIC) (Adamo, 2001)
-● Charm (Zaki & Hsiao, 2002)
-● FP-growth (Han, Pei & Yin, 1999)
-● Closet (Pei, Han & Mao, 2000)
-¿Qué los hace diferentes?
-● Forma en que los datos son cargados en memoria
-● Tiempo de procesamiento
-● Tipos de atributos (numéricos, categóricos)
-● Forma en que los itemsets son generados
-● Estructura de datos utilizada
-¿Qué los hace diferentes?
-● Forma en que los datos son cargados en memoria
-● Tiempo de procesamiento
-● Tipos de atributos (numéricos, categóricos)
-● Forma en que los itemsets son generados
-● Estructura de datos utilizada
-Los diferentes algoritmos deben siempre generar el mismo
-conocimiento.
-Ejemplo
-TID ítems ● Soporte mínimo (minsup) = 0.7
-111 lapicera, tinta, agenda, jabón
-112 lapicera, tinta, agenda
-113 lapicera, agenda
-114 lapicera, tinta, jabón, arroz
-Ejemplo
-● Soporte mínimo (minsup) = 0.7
-● Nivel 1: Encontrar 1-itemsets frecuentes
-{lapicera},{tinta},{agenda},{jabón}, {arroz}
-TID ítems
-111 lapicera, tinta, agenda, jabón
-112 lapicera, tinta, agenda
-113 lapicera, agenda
-114 lapicera, tinta, jabón, arroz
-Ejemplo
-● Soporte mínimo (minsup) = 0.7
-● Nivel 1: Encontrar 1-itemsets frecuentes
-{lapicera},{tinta},{agenda},{jabón}, {arroz}
-TID ítems
-111 lapicera, tinta, agenda, jabón
-112 lapicera, tinta, agenda
-113 lapicera, agenda
-114 lapicera, tinta, jabón, arroz
-Ejemplo
-● Soporte mínimo (minsup) = 0.7
-● Nivel 1: Encontrar 1-itemsets frecuentes
-{lapicera},{tinta},{agenda},{jabón}, {arroz}
-● Nivel 2: Encontrar 2-itemsets frecuentes
-TID ítems
-111 lapicera, tinta, agenda, jabón
-112 lapicera, tinta, agenda
-113 lapicera, agenda
-114 lapicera, tinta, jabón, arroz
-Ejemplo
-● Nivel 3:
-● Nivel 4:
-{lapicera, tinta, agenda, jabón}, {lapicera, tinta,
-agenda, arroz}, {tinta, agenda, arroz, jabón} ...
-TID ítems
-111 lapicera, tinta, agenda, jabón
-112 lapicera, tinta, agenda
-113 lapicera, agenda
-114 lapicera, tinta, jabón, arroz
-Ejemplo
-TID ítems
-111 lapicera, tinta, agenda, jabón
-112 lapicera, tinta, agenda
-113 lapicera, agenda
-114 lapicera, tinta, jabón, arroz
-Los itemsets frecuentes son:
-{lapicera}, {tinta}, {agenda}
-{lapicera, tinta},{lapicera, agenda}
-¿Qué relación existe entre los n-itemsets y los n+1-itemsets
-eliminados?
-¿Qué relación existe entre los n-itemsets y los n+1-itemsets
-eliminados?
-¿Qué relación existe entre los n-itemsets y los n+1-itemsets
-eliminados?
-Refinamiento: extender los itemsets frecuentes de una
-forma que asegure que todos sus subconjuntos son
-itemsets frecuentes.
-Propiedad Apriori
-Propiedad Apriori: cada subconjunto de un itemset frecuente debe ser
-también un itemset frecuente.
-Podemos crear itemsets frecuentes iterativamente, tomando los
-itemsets frecuentes de tamaño n y extendiéndolos a itemsets frecuentes
-de tamaño n+1.
-Algoritmo Apriori
-1. Se calcula el soporte de cada ítem individual, y se
-determinan los 1-itemsets frecuentes.
-2. En cada paso subsecuente, los itemsets frecuentes
-generados en los pasos anteriores se utilizan para
-generar los nuevos itemsets (itemsets candidatos).
-3. Se calcula el soporte de cada itemset candidato y se
-determinan los itemsets frecuentes.
-4. El proceso continúa hasta que no pueden ser
-encontrados nuevos itemsets frecuentes.
+In **supervised learning**, we typically have access to a set of $p$ features $X_1, X_2, . . . , X_p$, measured on $n$ observations, and a response $Y$ also measured on those same $n$ observations. The goal is then to predict $Y$ using $X_1, X_2, . . . , X_p$.
 
-Derivación de Reglas de asociación
-Para cada itemset frecuente I, se generan todos los subconjuntos no
-vacios de I.
-Para cada subconjunto a ⊂ I se genera una regla de la forma a -> (I-a) si
-la taza entre soporte(I) y soporte(a) es al menos la confianza mínima
-(minconf).
+Whereas **unsupervised learning** comprises of a set of statistical tools intended for the setting in which we have only a set of features $X_1, X_2, ... , X_p$ measured on $n$ observations.
 
-2/2
-2/2
-2/3
-2/2
-2/3
-2/3
-2/2
-2/3
-2/3
-2/3
+Unsupervised learning is often much _more challenging_.
+- The exercise tends to be more subjective, and there is **no simple goal** for the analysis, such as prediction of a response.
+- Unsupervised learning is often performed as **part of an exploratory data analysis**.
+- Furthermore, it can be _hard to assess the results obtained from unsupervised learning methods_, since there is no universally accepted mechanism for performing cross validation or validating results on an independent data set.
+	- If we fit a predictive model using a supervised learning technique, then it is possible to check our work by seeing how well our model predicts the response Y on observations not used in fitting the model.
+	- However, in unsupervised learning, there is no way to check our work because we don’t know the true answer—the problem is unsupervised.
 
-Software
-● MLxtend: http://rasbt.github.io/mlxtend/
-● Weka (http://www.cs.waikato.ac.nz/~ml/weka/)
-● Knime: http://www.knime.org/
-● RapidMiner: http://rapid-i.com/content/view/181/190/
-● AIAS: Association Interestingness Analysis System
-(http://www.comp.nus.edu.sg/~dm2)
-● Gnome Data Mine (linux):
-(http://www.togaware.com/datamining/gdatamine/gdmapriori.html)
-● FIMI, Frequent Itemset Mining Implementations repository, incluye
-software y datasets.
-● Useful links: http://www.kdnuggets.com/software/associations.html
-Conclusiones
-● Las reglas de asociación son útiles para descubrir asociaciones entre
-conjuntos de ítems en una base de datos de transacciones.
-● Puede ser utilizado en múltiples dominios: análisis de canasta de mercado,
-datos de censos, recomendación, aprendizaje en sistemas multiagentes,
-etc..
-● Varios algoritmos de descubrimiento de reglas de asociación, descubren el
-mismo conocimiento.
-● Son necesarias diversas tareas de post-procesamiento para eliminar reglas
-no interesantes, podar reglas redundantes, etc.
-● Extensiones: Reglas de asociación generalizadas, difusas, temporales, etc.
+## Reglas de Asociación, Soporte y Confianza
+
+Describe una **relación de asociación entre los elementos de un conjunto** de datos relevantes.
+
+**Ejemplo:** Clientes que compran productos lácteos tienden a comprar productos panificados.
+
+De manera general: $X \rightarrow Y$ donde $X$ e $Y$ son **conjuntos de ítems** del dominio.
+- $X$ se denomina el **antecedente** de la regla donde $Y$ sería su **consecuente**.
+- El conjunto de $X \cup Y$ se denomina **itemset**.
+
+El **soporte** para la regla $X \rightarrow Y$ es el porciento de las transacciones que contienen todos los ítems de X e Y.
+
+$$\text{Soporte(X $\rightarrow$ Y)} = Prob(X \cap Y) = \frac{\text{Número de transacciones que contienen X y Y}}{\text{Número total de transacciones}}$$
+
+La **confianza** para la regla $X \rightarrow Y$ es el porciento de transacciones que contienen Y, entre las transacciones que contienen.
+
+$$\text{Confianza(X $\rightarrow$ Y)} = Prob(Y|X) = \frac{\text{Soporte(X $\rightarrow$ Y)}}{\text{Soporte(X)}} = \frac{\text{Número de transacciones que contienen X y Y}}{\text{Número de transacciones que contienen X}}$$
+
+_Ejemplo:_
+
+![img.png](figs/11/img.png)
+
+### Interpretación de las Métricas
+
+- Regla de **bajo soporte**: Puede haber aparecido por _casualidad_.
+- Regla con **baja confianza**: Es probable que _no exista relación_ entre antecedentes y consecuente.
+
+¿Qué diferencia a $X \rightarrow Y$ de $Y \rightarrow X$? Tiene el **mismo soporte, pero distinta confianza**.
+
+## Descubrimiento de Reglas de Asociación
+
+**Objetivo:** Encontrar Reglas de Asociación con altos valores de soporte y confianza.
+- Umbrales de `minsup` y `minconf` definidos por el usuario.
+
+**Importante:** Encontrar dichas reglas no significa que deba existir una relación entre antecedente y consecuente. Por lo tanto, un experto en el dominio del problema debería siempre evaluar las reglas.
+
+![img_1.png](figs/11/img_1.png)
+
+- $I = \{i_1, i_2, ..., i_m\}$ es un conjunto de ítems.
+- $D$ es un conjunto de transacciones $T_j$. Donde cada $T_j$ es un conjunto de ítems (subconjunto de $I$).
+- Un itemset es un subconjunto de $I$.
+	- Un itemset que contiene $k$ ítems es un $k$-itemset.
+
+El soporte de un itemset $X$ es el porcentaje de transacciones en $D$ que contienen $X$.
+
+$$\text{Soporte}(X) = \frac{||\{T_j \in D : X \subseteq T_j\}||}{||D||} = \frac{\text{Número de transacciones que contienen X}}{\text{Número total de transacciones}}$$
+
+El descubrimiento de las reglas puede ser descompuesto de dos subproblemas:
+1. Encontrar todos los itemsets que tienen el _soporte mayor que el soporte mínimo_ (**itemsets frecuentes**).
+2. Utilizar los itemsets frecuentes para **generar las reglas deseadas**.
+   1. Para cada itemsets frecuentes $L (k > 1)$, encontrar todos los subconjuntos no vacíos, y para cada subconjunto $\{a\}$ generar una regla $\{a\}\rightarrow\{L-a\}$ si la confianza es mayor que el `minconf`. 
+      1. Para el itemset frecuente $\{A, B, C\}$: $\{A\} \rightarrow \{BC\}, \{AB\} \rightarrow \{C\}, \{AC\} \rightarrow \{B\}, \{B\} \rightarrow \{AC\}, \{BC\} \rightarrow \{A\}, \{C\} \rightarrow \{AB\}$
+
+### Algoritmos
+
+- Apriori y AprioriTid (Agrawal & Srikant,1994)
+- Opus (Webb,1996)
+- Direct Hasing and Pruning (DHP) (Adamo, 2001)
+- Dynamic Set Counting (DIC) (Adamo, 2001)
+- Charm (Zaki & Hsiao, 2002)
+- FP-growth (Han, Pei & Yin, 1999)
+- Closet (Pei, Han & Mao, 2000)
+
+**_¿Qué los hace diferentes?_**
+
+- Forma en que los datos son cargados en memoria
+- Tiempo de procesamiento
+- Tipos de atributos (numéricos, categóricos)
+- Forma en que los itemsets son generados
+- Estructura de datos utilizada
+  ¿Qué los hace diferentes?
+- Forma en que los datos son cargados en memoria
+- Tiempo de procesamiento
+- Tipos de atributos (numéricos, categóricos)
+- Forma en que los itemsets son generados
+- Estructura de datos utilizada
+
+**_Los diferentes algoritmos deben siempre generar el mismo conocimiento._**
+  
+_Ejemplo:_
+
+![img_2.png](figs/11/img_2.png)
+
+![img_3.png](figs/11/img_3.png)
+
+Los itemsets frecuentes son: {lapicera}, {tinta}, {agenda}, {lapicera, tinta},{lapicera, agenda}.
+
+### Propiedad Apriori
+
+_Cada subconjunto de un itemset frecuente debe ser también un itemset frecuente._
+
+Podemos crear itemsets frecuentes iterativamente, tomando los itemsets frecuentes de tamaño `n` y extendiéndolos a itemsets frecuentes de tamaño `n + 1`.
+
+### Algoritmo Apriori
+
+1. Se calcula el soporte de cada ítem individual, y se determinan los 1-itemsets frecuentes.
+2. En cada paso subsecuente, los itemsets frecuentes generados en los pasos anteriores se utilizan para generar los nuevos itemsets (itemsets candidatos).
+3. Se calcula el soporte de cada itemset candidato y se determinan los itemsets frecuentes.
+4. El proceso continúa hasta que no pueden ser encontrados nuevos itemsets frecuentes.
+
+_**Ejemplo:**_
+
+| Transacción | Items      |
+|-------------|------------|
+| 100         | 1, 3, 4    |
+| 200         | 2, 3, 5    |
+| 300         | 1, 2, 3, 5 |
+| 400         | 2, 5       |
+
+Soporte mínimo: 50% (0.5)
+
+_Iteración 1:_
+
+| Itemset | Soporte | Frecuente |
+|---------|---------|-----------|
+| {1}     | 2/4     | ✅         |
+| {2}     | 3/4     | ✅         |
+| {3}     | 3/4     | ✅         |
+| {4}     | 1/4     | ❌         |
+| {5}     | 3/4     | ✅         |
+
+$L_1$ = {{1}, {2}, {3}, {5}}
+
+_Iteración 2:_
+
+| Itemset | Soporte | Frecuente |
+|---------|---------|-----------|
+| {1, 2}  | 1/4     | ❌         |
+| {1, 3}  | 2/4     | ✅         |
+| {1, 5}  | 1/4     | ❌         |
+| {2, 3}  | 2/4     | ✅         |
+| {2, 5}  | 3/4     | ✅         |
+| {3, 5}  | 2/4     | ✅         |
+
+$L_2$ = {{1, 3}, {2, 3}, {2, 5}, {3, 5}}
+
+_Iteración 3:_
+
+| Itemset   | Soporte | Frecuente |
+|-----------|---------|-----------|
+| {2, 3, 5} | 2/4     | ✅         |
+
+$L_3$ = {{2, 3, 5}}
+
+Los itemsets frecuentes son: {1}, {2}, {3}, {5}, {1, 3}, {2, 3}, {2, 5}, {3, 5}, {2, 3, 5}.
+
+## Derivación de Reglas de Asociación
+
+Para cada itemset frecuente $I$, se generan todos los subconjuntos no vacíos de $I$.
+
+Para cada subconjunto $a \subset I$ se genera una regla de la forma $a \rightarrow (I-a)$ si la taza entre $soporte(I)$ y $soporte(a)$ es al menos la confianza mínima (`minconf`).
+
+**_Ejemplo:_**
+
+Dado `minconf` = 90% y los itemsets frecuentes: 
+
+| Itemset   | Soporte |
+|-----------|---------|
+| {1}       | 2/4     |
+| {2}       | 3/4     |
+| {3}       | 3/4     |
+| {5}       | 3/4     |
+| {1, 3}    | 2/4     |
+| {2, 3}    | 2/4     |
+| {2, 5}    | 3/4     |
+| {3, 5}    | 2/4     |
+| {2, 3, 5} | 2/4     |
+
+Se generan las reglas:
+
+| Regla                    | Confianza | > `minconf` |
+|--------------------------|-----------|-------------|
+| {1} $\rightarrow$ {3}    | 2/2       | ✅           |
+| {3} $\rightarrow$ {1}    | 2/3       | ❌           |
+| {2} $\rightarrow$ {3}    | 2/3       | ❌           |
+| {3} $\rightarrow$ {2}    | 2/3       | ❌           |
+| {2} $\rightarrow$ {5}    | 3/3       | ✅           |
+| {5} $\rightarrow$ {2}    | 3/3       | ✅           |
+| {3} $\rightarrow$ {5}    | 2/3       | ❌           |
+| {5} $\rightarrow$ {3}    | 2/3       | ❌           |
+| {2} $\rightarrow$ {3, 5} | 2/3       | ❌           |
+| {2, 3} $\rightarrow$ {5} | 2/2       | ✅           |
+| {2, 5} $\rightarrow$ {3} | 2/3       | ❌           |
+| {3} $\rightarrow$ {2, 5} | 2/3       | ❌           |
+| {3, 5} $\rightarrow$ {2} | 2/2       | ✅           |
+| {5} $\rightarrow$ {2, 3} | 2/3       | ❌           |
+
+## Software
+
+- MLxtend: http://rasbt.github.io/mlxtend/
+- Weka (http://www.cs.waikato.ac.nz/~ml/weka/)
+- Knime: http://www.knime.org/
+- RapidMiner: http://rapid-i.com/content/view/181/190/
+- AIAS: Association Interestingness Analysis System (http://www.comp.nus.edu.sg/~dm2)
+- Gnome Data Mine (linux): (http://www.togaware.com/datamining/gdatamine/gdmapriori.html)
+- FIMI, Frequent Itemset Mining Implementations repository, incluye software y datasets.
+- Useful links: http://www.kdnuggets.com/software/associations.html
+
+## Conclusiones
+
+- Las reglas de asociación son útiles para descubrir asociaciones entre conjuntos de ítems en una base de datos de transacciones.
+- Puede ser utilizado en múltiples dominios: análisis de canasta de mercado, datos de censos, recomendación, aprendizaje en sistemas multi-agentes, etc..
+- Varios algoritmos de descubrimiento de reglas de asociación, descubren el mismo conocimiento.
+- Son necesarias diversas tareas de post-procesamiento para eliminar reglas no interesantes, podar reglas redundantes, etc.
+- Extensiones: Reglas de asociación generalizadas, difusas, temporales, etc.
 
 # The Bias-Variance Trade-Of
 
@@ -3184,10 +3197,17 @@ Consequently, the expected test MSE declines. However, at some point increasing 
 bias but starts to significantly increase the variance. When this happens the test MSE increases. Note that we observed
 this pattern of decreasing test MSE followed by increasing test MSE in the right-hand panels of Examples 1-3.
 
-| Example 1                                                                                                                                                                                                                                                                                                                                                                                        | Example 2                                                                                                                       | Example 3                                                                                                            |
-|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
-| ![img_6.png](figs/3/img_6.png)                                                                                                                                                                                                                                                                                                                                                                   | ![img_7.png](figs/3/img_7.png)                                                                                                  | ![img_8.png](figs/3/img_8.png)                                                                                       |
-| Left: Data simulated from f, shown in black. Three estimates of f are shown: the linear regression line (orange curve), and two smoothing spline fts (blue and green curves). Right: Training MSE (grey curve), test MSE (red curve), and minimum possible test MSE over all methods (dashed line). Squares represent the training and test MSEs for the three fts shown in the left-hand panel. | Using a different true f that is much closer to linear. In this setting, linear regression provides a very good ft to the data. | Using a different f that is far from linear. In this setting, linear regression provides a very poor ft to the data. |
+| Examples                                                                                                                                                                                                                                                                                                                                                                                              |
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Example 1**                                                                                                                                                                                                                                                                                                                                                                                         |
+| ![img_6.png](figs/3/img_6.png)                                                                                                                                                                                                                                                                                                                                                                        |
+| _Left:_ Data simulated from f, shown in black. Three estimates of f are shown: the linear regression line (orange curve), and two smoothing spline fts (blue and green curves). _Right:_ Training MSE (grey curve), test MSE (red curve), and minimum possible test MSE over all methods (dashed line). Squares represent the training and test MSEs for the three fits shown in the left-hand panel. |
+| **Example 2**                                                                                                                                                                                                                                                                                                                                                                                         |
+| ![img_7.png](figs/3/img_7.png)                                                                                                                                                                                                                                                                                                                                                                        |
+| Using a different true f that is much closer to linear. In this setting, linear regression provides a very good fit to the data.                                                                                                                                                                                                                                                                      |
+| **Example 3**                                                                                                                                                                                                                                                                                                                                                                                         |
+| ![img_8.png](figs/3/img_8.png)                                                                                                                                                                                                                                                                                                                                                                        |
+| Using a different f that is far from linear. In this setting, linear regression provides a very poor fit to the data.                                                                                                                                                                                                                                                                                 |
 
 ![img_5.png](figs/3/img_5.png)
 
