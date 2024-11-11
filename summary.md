@@ -2805,6 +2805,24 @@ During **inference**, we don’t have access to the target sequence—we’re tr
 2. The decoder starts by looking at the encoded source sequence as well as an initial “seed” token (such as the string "[start]"), and uses them to predict the first real token in the sequence.
 3. The predicted sequence so far is fed back into the decoder, which generates the next token, and so on, until it generates a stop token (such as the string "[end]").
 
+### Sequence-to-sequence learning with Transformer
+
+Sequence-to-sequence learning is the task where Transformer really shines. Neural attention enables Transformer models to successfully process sequences that are considerably longer and more complex than those RNNs can handle.
+
+You’re already familiar with the **Transformer encoder**, which uses _self-attention to produce context-aware representations of each token_ in an input sequence. In a **sequence-to-sequenc**e Transformer, the Transformer encoder would naturally play the role of the encoder, which _reads the source sequence and produces an encoded representation of it_. Unlike our previous RNN encoder, though, the Transformer encoder _keeps the encoded representation in a sequence format_: it’s a sequence of context-aware embedding vectors.
+
+The second half of the model is the **Transformer decoder**. Just like the RNN decoder, it _reads tokens 0…N in the target sequence and tries to predict token N+1_. Crucially, while doing this, _it uses neural attention to identify which tokens in the encoded source sentence are most closely related to the target token_ it’s currently trying to predict— perhaps not unlike what a human translator would do. 
+
+_THE TRANSFORMER DECODER_
+
+![img.png](figs/9/img_10.png)
+
+The decoder internals: you’ll recognize that it looks very similar to the Transformer encoder, except that an extra attention block is inserted between the self-attention block applied to the target sequence and the dense layers of the exit block.
+
+**Causal padding** is absolutely critical to successfully training a sequence-to-sequence Transformer. Unlike an RNN, which looks at its input one step at a time, and thus will only have access to steps 0...N to generate output step N (which is token N+1 in the target sequence), **the Transformer Decoder is order-agnostic:it looks at the entire target sequence at once.** If it were allowed to use its entire input, it would simply learn to copy input step N+1 to location N in the output. The model would thus achieve perfect training accuracy, but of course, when running inference, it would be completely useless, since input steps beyond N aren’t available.
+
+The fix is simple: we’ll **mask the upper half of the pairwise attention matrix to prevent the model from paying any attention to information from the future—only information** from tokens 0...N in the target sequence should be used when generating target token N+1.
+
 # The Bias-Variance Trade-Of
 
 Though the mathematical proof is beyond the scope of this book, it is possible to show that the expected test MSE, for a
