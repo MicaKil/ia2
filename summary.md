@@ -139,6 +139,17 @@
     * [Stacking recurrent layers](#stacking-recurrent-layers)
     * [Bidirectional RNNs](#bidirectional-rnns)
 * [The Trade-Of Between Prediction Accuracy and Model Interpretability](#the-trade-of-between-prediction-accuracy-and-model-interpretability)
+* [Deep learning for text](#deep-learning-for-text)
+  * [Preparing text data](#preparing-text-data)
+    * [Text standardization](#text-standardization)
+    * [Tokenization](#tokenization)
+    * [Vocabulary Indexing](#vocabulary-indexing)
+    * [Using the TextVectorization layer](#using-the-textvectorization-layer)
+  * [Two approaches for representing groups of words: Sets and sequences](#two-approaches-for-representing-groups-of-words-sets-and-sequences)
+    * [Processing words as a set: The bag-of-words approach](#processing-words-as-a-set-the-bag-of-words-approach)
+    * [Processing words as a sequence: The sequence model approach](#processing-words-as-a-sequence-the-sequence-model-approach)
+    * [Word embeddings](#word-embeddings)
+* [The Transformer architecture](#the-transformer-architecture)
 * [The Bias-Variance Trade-Of](#the-bias-variance-trade-of)
 <!-- TOC -->
 
@@ -1816,6 +1827,290 @@ However, bidirectional RNNs are a great fit for text data, or **any other kind o
 There are several reasons that we might prefer a more restrictive model instead of a very flexible approach. If we are mainly interested in inference, then restrictive models are much more interpretable. For instance, when inference is the goal, the linear model may be a good choice since it will be quite easy to understand the relationship between $Y$ and $X_1, X_2,...,X_p$. In contrast, very flexible approaches, such as the splines and boosting methods, can lead to such complicated estimates of $f$ that it is difficult to understand how any individual predictor is associated with the response.
 
 We have established that when inference is the goal, there are clear advantages to using simple and relatively inflexible statistical learning methods. In some settings, however, we are only interested in prediction, and the interpretability of the predictive model is simply not of interest. For instance, if we seek to develop an algorithm to predict the price of a stock, our sole requirement for the algorithm is that it predict accurately— interpretability is not a concern. In this setting, we might expect that it will be best to use the most flexible model available. Surprisingly, this is not always the case! We will often obtain more accurate predictions using a less flexible method. This phenomenon, which may seem counterintuitive at frst glance, has to do with the potential for overflowing in highly flexible methods.
+
+# Deep learning for text
+
+**Modern NLP** is about using machine learning and large datasets to give computers the ability not to understand language, which is a more lofty goal, but to ingest a piece of language as input and return something useful, like predicting the following:
+- “What’s the topic of this text?” (**text classification**)
+- “Does this text contain abuse?” (**content filtering**)
+- “Does this text sound positive or negative?” (**sentiment analysis**)
+- “What should be the next word in this incomplete sentence?” (**language modeling**)
+- “How would you say this in German?” (**translation**)
+- “How would you summarize this article in one paragraph?” (**summarization**)
+- etc.
+
+Text-processing models simply **look for statistical regularities** in their input data, which turns out to be sufficient to perform well on many simple tasks. NLP is pattern recognition applied to words, sentences, and paragraphs.
+
+## Preparing text data
+
+Deep learning models, being differentiable functions, can only process numeric tensors: they can’t take raw text as input. **Vectorizing text** is the process of transforming text into numeric tensors. Text vectorization processes come in many shapes and forms, but they all follow the same template:
+
+- First, you **standardize** the text to make it easier to process, such as by converting it to lowercase or removing punctuation. 
+- You **split the text into units** (called **tokens**), such as characters, words, or groups of words. This is called **tokenization**. 
+- You **convert each such token into a numerical vector**. This will usually involve first **indexing** all tokens present in the data.
+
+![img.png](figs/8/img.png)
+
+### Text standardization
+
+Text standardization is a basic form of feature engineering that aims to erase encoding differences that you don’t want your model to have to deal with.
+
+**Standardization schemes:**
+- Convert to lowercase and remove punctuation characters.
+- Convert special characters to a standard form (ascii, for example).
+- **Stemming**: converting variations of a term (such as different conjugated forms of a verb) into a single shared representation, like turning “caught” and “been catching” into “[catch]” or “cats” into “[cat]”.
+
+With these standardization techniques, your **model will require less training data and will generalize better**—it won’t need abundant examples of both “Sunset” and “sunset” to learn that they mean the same thing. Of course, standardization **may also erase some amount of information**, so always keep the context in mind: for instance, if you’re writing a model that extracts questions from interview articles, it should definitely treat “?” as a separate token instead of dropping it, because it’s a useful signal for this specific task.
+
+### Tokenization
+
+Once your text is standardized, you need to **break it up into units to be vectorized** (tokens), a step called tokenization. You could do this in three different ways:
+- **Word-level** tokenization—Where _tokens are space-separated (or punctuation-separated) substrings_. A variant of this is to further **split words into subwords** when applicable—for instance, treating “staring” as “star+ing” or “called” as “call+ed.”
+- **N-gram** tokenization—Where tokens are _groups of N consecutive words_. For instance, “the cat” or “he was” would be 2-gram tokens (also called **bigrams**).
+- **Character-level** tokenization—Where _each character is its own token_. In practice, this scheme is rarely used, and you only really see it in specialized contexts, like text generation or speech recognition.
+
+In **general**, you’ll always use either _word-level or N-gram_ tokenization. There are two kinds of **text-processing models**: 
+- those that _care about word order_, called **sequence models**, and 
+- those that _treat input words as a set_, discarding their original order, called **bag-of-words models**. 
+If you’re building a _sequence model_, you’ll use **word-level** tokenization, and if you’re building a _bag-of-words model_, you’ll use **N-gram** tokenization. N-grams are a way to _artificially inject a small amount of local word order_ information into the model.
+
+### Vocabulary Indexing
+
+Once your text is split into tokens, you need to **encode each token into a numerical representation**. You could potentially do this in a **stateless** way, such as by _hashing_ each token into a fixed binary vector, but in practice, the way you’d go about it is to build an **index of all terms found in the training data** (the “vocabulary”), and **assign a unique integer to each entry** in the vocabulary. You can then **convert that integer into a vector encoding** that can be processed by a neural network, like a one-hot vector.
+
+Note that at this step it’s common to **restrict the vocabulary** to only the top 20,000 or 30,000 most common words found in the training data.
+
+When we look up a new token in our vocabulary index, it may not necessarily exist. To handle this, you should use an **“out of vocabulary” index** (abbreviated as OOV index)—a catch-all for any token that wasn’t in the index. It’s **usually index 1**. When decoding a sequence of integers back into words, you’ll replace 1 with something like “[UNK]” (which you’d call an “OOV token”).
+
+“Why use 1 and not 0?” you may ask. That’s because 0 is already taken by the **mask token** (index 0). The mask token tells us “ignore me, I’m not a word.” You’d use it in particular to **pad sequence dat**a: because data batches need to be contiguous, all sequences in a batch of sequence data must have the same length, so shorter sequences should be padded to the length of the longest sequence.
+
+### Using the TextVectorization layer
+
+Keras _TextVectorization layer_, which is fast and efficient and can be dropped directly into a tf.data pipeline or a Keras model.
+
+![img_1.png](figs/8/img_1.png)
+
+By default, the TextVectorization layer will use the setting “convert to lowercase and remove punctuation” for text standardization, and “split on whitespace” for tokenization. But importantly, you can provide custom functions for standardization and tokenization.
+
+```python
+text_vectorization = TextVectorization(
+  output_mode="int",
+  standardize=custom_standardization_fn,
+  split=custom_split_fn,
+)
+```
+
+Note that you can retrieve the computed vocabulary via `get_vocabulary()`. The first two entries in the vocabulary are the mask token (index 0) and the OOV token (index 1). Entries in the vocabulary list are **sorted by frequency**.
+
+```python
+>>> vocabulary = text_vectorization.get_vocabulary()
+>>> test_sentence = "I write, rewrite, and still rewrite again"
+>>> encoded_sentence = text_vectorization(test_sentence)
+>>> print(encoded_sentence)
+tf.Tensor([ 7 3 5 9 1 5 10], shape=(7,), dtype=int64)
+>>> inverse_vocab = dict(enumerate(vocabulary))
+>>> decoded_sentence = " ".join(inverse_vocab[int(i)] for i in encoded_sentence)
+>>> print(decoded_sentence)
+"i write rewrite and [UNK] rewrite again"
+```
+
+## Two approaches for representing groups of words: Sets and sequences
+
+Words in a sentence don’t have a natural, canonical order. Different languages order similar words in very different ways. Even within a given language, you can typically say the same thing in different ways by reshuffling the words a bit. **Order is clearly important, but its relationship to meaning isn’t straightforward.**
+
+**How to represent word order** is the pivotal question from which different kinds of NLP architectures spring. The simplest thing you could do is just _discard order and treat text as an unordered set of words_—this gives you **bag-of-words models**. You could also decide that _words should be processed strictly in the order in which they appear_, one at a tim. Finally, a _hybrid approach_ is also possible: the **Transformer** architecture is _technically order-agnostic_, yet it **injects word-position information** into the representations it processes, which enables it to _simultaneously look at different parts of a sentence_ (unlike RNNs) while still being order-aware. Because they take into account word order, both RNNs and Transformers are called **sequence models**.
+
+Historically, most early applications of machine learning to NLP just involved bag-of-words models. Interest in sequence models only started rising in 2015, with the rebirth of recurrent neural networks. Today, both approaches remain relevant. Let’s see how they work, and when to leverage which.
+
+### Processing words as a set: The bag-of-words approach
+
+The simplest way to encode a piece of text for processing by a machine learning model is to discard order and treat it as a set (a “bag”) of tokens. You could either look at individual words (unigrams), or try to recover some local order information by looking at groups of consecutive token (N-grams).
+
+_SINGLE WORDS (UNIGRAMS) WITH BINARY ENCODING_
+
+The main advantage of this encoding is that you can represent an entire text as a single vector, where each entry is a presence indicator for a given word.
+
+![img_6.png](figs/8/img_6.png)
+
+![img_7.png](figs/8/img_7.png)
+
+![img_8.png](figs/8/img_8.png)
+
+This gets us to a test accuracy of 89.2%: not bad! Note that in this case, since the dataset is a balanced two-class classification dataset (there are as many positive samples as negative samples), the “naive baseline” we could reach without training an actual model would only be 50%.
+
+_BIGRAMS WITH BINARY ENCODING_
+
+Of course, **discarding word order is very reductive**, because even atomic concepts can be expressed via multiple words. For this reason, you will usually end up **re-injecting local order information into your bag-of-words representation by looking at N-grams** rather than single words (most commonly, bigrams).
+
+![img_9.png](figs/8/img_9.png)
+
+**Training and testing the binary bigram model:** 
+
+```python
+text_vectorization.adapt(text_only_train_ds)
+binary_2gram_train_ds = train_ds.map(
+  lambda x, y: (text_vectorization(x), y),
+  num_parallel_calls=4)
+binary_2gram_val_ds = val_ds.map(
+  lambda x, y: (text_vectorization(x), y),
+  num_parallel_calls=4)
+binary_2gram_test_ds = test_ds.map(
+  lambda x, y: (text_vectorization(x), y),
+  num_parallel_calls=4)
+
+model = get_model()
+model.summary()
+callbacks = [
+  keras.callbacks.ModelCheckpoint("binary_2gram.keras",
+    save_best_only=True)
+]
+model.fit(binary_2gram_train_ds.cache(),
+  validation_data=binary_2gram_val_ds.cache(),
+  epochs=10,
+  callbacks=callbacks)
+model = keras.models.load_model("binary_2gram.keras")
+print(f"Test acc: {model.evaluate(binary_2gram_test_ds)[1]:.3f}")
+```
+
+We’re now getting 90.4% test accuracy. Turns out local order is pretty important.
+
+_BIGRAMS WITH TF-IDF ENCODING_
+
+You can also add a bit more information to this representation by **counting how many times each word or N-gram occurs**, that is to say, by taking the histogram of the words over the text.
+
+If you’re doing **text classification**, knowing how many times a word occurs in a sample is **critical**.
+
+![img_10.png](figs/8/img_10.png)
+
+Now, of course, some words are bound to occur more often than others no matter what the text is about. How could we address this?
+
+You already guessed it: via **normalization**. We could just normalize word counts by subtracting the mean and dividing by the variance (computed across the entire training dataset). That would make sense. Except most vectorized sentences consist almost entirely of zeros.
+
+**_TF-IDF normalization_**—TF-IDF stands for “term frequency, inverse document frequency.”
+
+TF-IDF is so common that it’s built into the `TextVectorization` layer. All you need to do to start using it is to switch the `output_mode` argument to "`tf_idf`".
+
+The **frequency** at which the term appears across all documents in your dataset matters too: _terms that appear in almost every document (like “the” or “a”) aren’t particularly **informative**_, while terms that appear only in a _small subset of all texts are very distinctive, and thus **important**_. TF-IDF is a metric that fuses these two ideas. It weights a given term by taking “**term frequency**,” how many times the term appears in the current document, and dividing it by a measure of “**document frequency**”, which estimates how often the term comes up across the dataset.
+
+![img_11.png](figs/8/img_11.png)
+
+### Processing words as a sequence: The sequence model approach
+
+What if, instead of manually crafting order-based features, we exposed the model to raw word sequences and let it figure out such features on its own? This is what _sequence models_ are about.
+
+1. Start by representing your input samples as **sequences of integer indices** (one integer standing for one word). 
+2. Then, you’d **map each integer to a vector** to obtain vector sequences. 
+3. Finally, you’d _feed these sequences of vectors into a stack of layers_ that could **cross-correlate features from adjacent vectors**, such as a 1D convnet, a RNN, or a Transformer.
+
+Nowadays sequence modeling is almost universally done with Transformers.
+
+_A FIRST PRACTICAL EXAMPLE_
+
+![img_12.png](figs/8/img_12.png)
+
+Next, let’s make a model. The simplest way to convert our integer sequences to vector sequences is to one-hot encode the integers (each dimension would represent one possible term in the vocabulary). On top of these one-hot vectors, we’ll add a simple bidirectional LSTM.
+
+![img_13.png](figs/8/img_13.png)
+
+**This model trains very slowly**. This is because our inputs are quite large: each input sample is encoded as a matrix of size (600, 20000) (600 words per sample, 20,000 possible words). That’s 12,000,000 floats for a single movie review. Our bidirectional LSTM has a lot of work to do.
+
+Using **one-hot encoding** to turn words into vectors, which was the simplest
+thing we can do, isn’t a great idea. There’s a better way: **word embeddings**.
+
+### Word embeddings
+
+Crucially, when you encode something via **one-hot encoding**, you’re making a feature engineering decision. You’re injecting into your model a fundamental assumption about the structure of your feature space. That assumption is that the _different tokens you’re encoding are all independent from each other_: indeed, one-hot vectors are all orthogonal to one another. And in the case of words, that assumption is clearly wrong. **_Words form a structured space: they share information with each other._** The words “movie” and “film” are interchangeable in most sentences, so the vector that represents “movie” should not be orthogonal to the vector that represents “film”—they should be the same vector, or close enough.
+
+To get a bit more abstract, **the geometric relationship between two word vectors should reflect the semantic relationship between these words**. For instance, in a reasonable word vector space, you would expect synonyms to be embedded into similar word vectors, and in general, you would expect the geometric distance (such as the cosine distance or L2 distance) between any two word vectors to relate to the “semantic distance” between the associated words. **Words that mean different things should lie far away from each other, whereas related words should be closer**.
+
+**Word embeddings** are vector representations of words that achieve exactly this: _they map human language into a structured geometric space_.
+
+Whereas the **vectors obtained through one-hot encoding** are
+- binary, 
+- sparse (mostly made of zeros), 
+- and very high-dimensional (the same dimensionality as the number of words in the vocabulary), 
+
+**word embeddings** are low-dimensional floating-point vectors (that is, dense vectors, as opposed to sparse vectors). It’s common to see word embeddings that are 256-dimensional, 512-dimensional, or 1,024-dimensional when dealing with very large vocabularies. On the other hand, one-hot encoding words generally leads to vectors that are 20,000-dimensional or greater (capturing a vocabulary of 20,000 tokens, in this case). So, **word embeddings pack more information into far fewer dimensions.**
+
+![img_2.png](figs/8/img_2.png)
+
+Besides being dense representations, word embeddings are also **structured representations**, and their structure is learned from data. _Similar words get embedded in close locations_, and further, **specific directions in the embedding space are meaningful**. To make this clearer, let’s look at a concrete example.
+
+![img_3.png](figs/8/img_3.png)
+
+In figure 11.3, four words are embedded on a 2D plane: cat, dog, wolf, and tiger. With the vector representations we chose here, _some semantic relationships between these words can be encoded as geometric transformations_. For instance, the same vector allows us to go from cat to tiger and from dog to wolf: this vector could be interpreted as the “from pet to wild animal” vector. Similarly, another vector lets us go from dog to cat and from wolf to tiger, which could be interpreted as a “from canine to feline” vector.
+
+In real-world word-embedding spaces, common examples of meaningful geometric transformations are “gender” vectors and “plural” vectors. For instance, by adding a “female” vector to the vector “king,” we obtain the vector “queen.” By adding a “plural” vector, we obtain “kings.” Word-embedding spaces typically feature thousands of such interpretable and potentially useful vectors.
+
+Let’s look at how to use such an embedding space in practice. There are **two ways to obtain word embeddings**:
+- **Learn word embeddings jointly with the main task you care about** (such as document classification or sentiment prediction). In this setup, you start with random word vectors and then learn word vectors in the same way you learn the weights of a neural network.
+- Load into your model word embeddings that were precomputed using a different machine learning task than the one you’re trying to solve. These are called **pretrained word embeddings**.
+
+_LEARNING WORD EMBEDDINGS WITH THE EMBEDDING LAYER_
+
+More pragmatically, what makes a good word-embedding space depends heavily on your task. It’s thus _reasonable to learn a new embedding space with every new task_. Fortunately, backpropagation makes this easy. It’s about **learning the weights of a layer**: the Embedding layer.
+
+![img_4.png](figs/8/img_4.png)
+
+The Embedding layer is best understood as **a dictionary that maps integer indices** (which stand for specific words) **to dense vectors**. It takes integers as input, looks up these integers in an internal dictionary, and returns the associated vectors.
+
+$$Word index \rightarrow Embedding layer \rightarrow Corresponding word vector$$
+
+The `Embedding` layer takes as **input** a rank-2 tensor of integers, of shape `(batch_size, sequence_length)`, where each entry is a sequence of integers. The layer then **returns** a 3D floating-point tensor of shape `(batch_size, sequence_length, embedding_dimensionality)`.
+
+When you **instantiate** an Embedding layer, its **weights** (its internal dictionary of token vectors) are initially **random**, just as with any other layer. During training, **these word vectors are gradually adjusted via backpropagation**, structuring the space into something the downstream model can exploit. Once fully trained, the embedding space will show a lot of structure—a kind of structure specialized for the specific problem for which you’re training your model.
+
+![img_5.png](figs/8/img_5.png)
+
+It trains much faster than the one-hot model (since the LSTM only has to process 256-dimensional vectors instead of 20,000-dimensional), and its test accuracy is comparable (87%). However, we’re still some way off from the results of our basic bigram model. Part of the reason why is simply that **the model is looking at slightly less data**:the bigram model processed full reviews, while our sequence model truncates sequences after 600 words.
+
+_UNDERSTANDING PADDING AND MASKING_
+
+One thing that’s slightly hurting model performance here is that our input sequences are full of zeros. This comes from our use of the `output_sequence_length=max_length` option in `TextVectorization` (with `max_length` equal to 600): sentences longer than 600 tokens are truncated to a length of 600 tokens, and sentences shorter than 600 tokens are padded with zeros at the end so that they can be concatenated together with other sequences to form contiguous batches.
+
+We’re using a **bidirectional RNN**: the RNN that looks at the tokens in their natural order will spend its last iterations seeing only vectors that encode padding—possibly for several hundreds of iterations if the original sentence was short. The information stored in the internal state of the RNN will gradually fade out as it gets exposed to these meaningless inputs.
+
+We need some way to **tell the RNN that it should skip these iterations**. There’s an API for that: **_masking_**.
+
+The Embedding layer is capable of generating a “mask” that corresponds to its input data. This mask is a **tensor of ones and zeros** (or True/False booleans), of shape
+`(batch_size, sequence_length)`, where the entry `mask[i, t]` indicates where timestep `t` of sample `i` should be skipped or not (the timestep will be skipped if mask[i, t] is 0 or False, and processed otherwise).
+
+By default, this option isn’t active—you can turn it on by passing `mask_zero=True`
+to your Embedding layer. You can retrieve the mask with the `compute_mask()` method.
+
+![img_14.png](figs/8/img_14.png)
+
+_USING PRETRAINED WORD EMBEDDINGS_
+
+_Sometimes you have so little training data available that you can’t use your data alone to learn an appropriate task-specific embedding of your vocabulary._ In such cases, instead of learning word embeddings jointly with the problem you want to solve, you can load embedding vectors from a precomputed embedding space that you know is highly structured and exhibits useful properties—one that captures generic aspects of language structure. 
+
+Such word embeddings are generally computed using **word-occurrence statistic**s(observations about what words co-occur in sentences or documents), using a variety of techniques, some involving neural networks, others not. 
+
+The most famous and successful word-embedding schemes: the **Word2Vec** algorithm. Word2Vec dimensions _capture specific semantic properties_, such as gender. Another popular one is called **Global Vectors for Word Representation** (GloVe). This embedding technique is _based on factorizing a matrix of word co-occurrence statistics_. Its developers have made available precomputed embeddings for millions of English tokens, obtained from Wikipedia data and Common Crawl data.
+
+The GloVe word embeddings precomputed on the 2014 English Wikipedia dataset is an 822 MB zip file containing 100-dimensional embedding vectors for 400,000 words (or non-word tokens).
+
+Let’s parse the unzipped file (a .txt file) to build an index that maps words (as strings) to their vector representation.
+
+![img_15.png](figs/8/img_15.png)
+
+Next, let’s build an **embedding matrix** that you can load into an Embedding layer. It must be a matrix of shape `(max_words, embedding_dim)`, where each entry `i` contains the `embedding_dim`-dimensional vector for the word of index i in the reference word index (built during tokenization).
+
+![img_16.png](figs/8/img_16.png)
+
+Finally, we use a `Constant` initializer to load the pretrained embeddings in an Embedding layer. So as not to disrupt the pretrained representations during training, we freeze the layer via `trainable=False`:
+
+```python
+embedding_layer = layers.Embedding(
+  max_tokens,
+  embedding_dim,
+  embeddings_initializer=keras.initializers.Constant(embedding_matrix),
+  trainable=False,
+  mask_zero=True,
+)
+```
+
+# The Transformer architecture
 
 # The Bias-Variance Trade-Of
 
