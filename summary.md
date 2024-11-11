@@ -125,10 +125,21 @@
     * [Residual Connections](#residual-connections)
     * [Batch normalization](#batch-normalization)
 * [⏳ Deep learning for timeseries](#-deep-learning-for-timeseries)
+  * [Time series properties](#time-series-properties)
   * [A temperature-forecasting example](#a-temperature-forecasting-example)
+    * [Parsing the data](#parsing-the-data)
+    * [Plotting the temperature timeseries](#plotting-the-temperature-timeseries)
+    * [Preparing the data](#preparing-the-data)
+  * [Recurrent Neural Networks](#recurrent-neural-networks)
+    * [Example](#example-)
+    * [A simple RNN in Keras `SimpleRNN`](#a-simple-rnn-in-keras-simplernn)
+  * [Long Short-Term Memory (LSTM)](#long-short-term-memory-lstm)
+  * [Advanced use of recurrent neural networks](#advanced-use-of-recurrent-neural-networks)
+    * [Recurrent dropout](#recurrent-dropout)
+    * [Stacking recurrent layers](#stacking-recurrent-layers)
+    * [Bidirectional RNNs](#bidirectional-rnns)
 * [The Trade-Of Between Prediction Accuracy and Model Interpretability](#the-trade-of-between-prediction-accuracy-and-model-interpretability)
 * [The Bias-Variance Trade-Of](#the-bias-variance-trade-of)
-* [Q & A](#q--a)
 <!-- TOC -->
 
 # Linear Regression
@@ -1587,10 +1598,214 @@ By far, the most common timeseries-related task is **forecasting**: predicting w
 - **Event detection:** Identify the _occurrence of a specific expected event_ within a  continuous data stream. A particularly useful application is “hotword detection,” where a model monitors an audio stream and detects utterances like “Ok Google” or “Hey Alexa.”
 - **Anomaly detection:** Detect _anything unusual happening within a continuous datastream_. Anomaly detection is typically done via _unsupervised learning_, because you often don’t know what kind of anomaly you’re looking for, so you can’t train on specific anomaly examples.
 
+## Time series properties
+
+1. **Period:** time steps at which the series is observed;
+2. **Frequency:** Frequency at which the series is observed;
+3. **Trend:** long-term change in the mean of the data;
+4. **Stationarity:** When time series properties remain constant over time;
+5. **Regularity:** Whether the series is captured at regular intervals;
+6. **Seasonality:** regular and predictable changes;
+7. **Autocorrelation:** Correlation with past observations;
+
 ## A temperature-forecasting example
 
-- All of our code examples will target a single problem: **predicting the temperature 24 hours in the future**, given a timeseries of hourly measurements of quantities.
+- **Predicting the temperature 24 hours in the future**, given a timeseries of hourly measurements of quantities.
+	- Weather timeseries dataset: 14 different quantities (such as temperature, pressure, humidity, wind direction, and so on) were _recorded every 10 minutes over_ several years.
 - Densely connected networks and convolutional networks aren’t well-equipped to deal with this kind of dataset, while a different kind of **machine learning technique—recurrent neural networks (RNNs)**—really shines on this type of problem.
+
+### Parsing the data
+
+Convert lines of data into NumPy arrays: one array for the temperature and another one for the rest of the data—the features we will use to predict future temperatures.
+
+```python
+import numpy as np
+temperature = np.zeros((len(lines),))
+raw_data = np.zeros((len(lines), len(header) - 1))
+for i, line in enumerate(lines):
+	values = [float(x) for x in line.split(",")[1:]]
+temperature[i] = values[1]  # We store column 1 in the “temperature” array.
+raw_data[i, :] = values[:] # We store all columns (including the temperature) in the “raw_data” array.
+```
+
+### Plotting the temperature timeseries
+
+![img.png](figs/7/img.png)
+
+_The plot of temperature (in degrees Celsius) over time._ On this plot, the yearly periodicity of temperature can be seen—the data spans 8 years.
+
+![img_1.png](figs/7/img_1.png)
+
+_The first 10 days of the temperature timeseries._ This plot shows the daily periodicity, especially for the last 4 days.
+
+**Always look for periodicity in your data:** Periodicity over multiple timescales is an important and very common property of timeseries data.
+
+### Preparing the data
+
+In all our experiments, we’ll use the first 50% of the data for training, the following 25% for validation, and the last 25% for testing. When working with timeseries data, **it’s important to use validation and test data that is more recent than the training data**, because _you’re trying to predict the future given the past, not the reverse_, and your validation/test splits should reflect that.
+
+## Recurrent Neural Networks
+
+Neither the fully connected approach nor the convolutional approach did well. 
+- The **densely connected approach** first flattened the timeseries, which removed the notion of time from the input data. 
+- The **convolutional approach** treated every segment of the data in the same way, even applying pooling, which destroyed order information.
+
+Let’s instead look at the data as what it is: a sequence, where causality and order matter. There’s a family of neural network architectures designed specifically for this use case: recurrent neural networks.
+
+A major characteristic of all neural networks you’ve seen so far, such as densely connected networks and convnets, is that they have no memory. Each input shown to them is processed independently, with no state kept between inputs. With such networks, in order to process a sequence or a temporal series of data points, you have to show the entire sequence to the network at once: turn it into a single data point.
+
+A **recurrent neural network** (RNN) processes sequences by _iterating through the sequence elements_ and _maintaining a state_ that contains information relative to what it has seen so far. In effect, an RNN is a type of neural network that has an internal loop.
+
+![img_2.png](figs/7/img_2.png)
+
+The **state of the RNN is reset** between _processing two different, independent sequences_ (such as two samples in a batch), so you still consider one sequence to be a single data point: a single input to the network. What changes is that this data point is no longer processed in a single step; rather, the _network internally loops over sequence elements_. 
+
+**Forward pass of a toy RNN:** This RNN takes as **input** a sequence of vectors, which we’ll encode as a rank-2 tensor of size `(timesteps, input_features)`. It **loops over timesteps**, and _at each timestep_, it considers its current state at `t` and the input at `t` (of shape (`input_features,`), and _combines them to obtain_ the **output** at `t`. We’ll then set the **state for the next step** to be _this previous output_. For the first timestep, the previous output isn’t defined; hence, there is no current state. So we’ll initialize the state as an _all-zero vector_ called the **initial state** of the network.
+
+![img_3.png](figs/7/img_3.png)
+
+**Function f:** the transformation of the input and state into an output will be parameterized by two matrices, `W` and `U`, and a bias vector.
+
+![img_4.png](figs/7/img_4.png)
+
+_NumPy implementation of a simple RNN:_
+
+![img_6.png](figs/7/img_6.png)
+
+**_RNNs are characterized by their step function._**
+
+### Example 
+
+![img_5.png](figs/7/img_5.png)
+
+`output_t = np.tanh(np.dot(W, input_t) + np.dot(U, state_t) + b)`
+
+In this example, the final output is a rank-2 tensor of shape `(timesteps, output_features)`, where each timestep is the output of the loop at time `t`. **Each timestep** `t` in the output tensor **contains information about timesteps** `0` to `t` in the input sequence—about the entire past. For this reason, in many cases, you don’t need this full sequence of outputs; **you just need the last output** (`output_t` at the end of the loop), because _it already contains information about the entire sequence_.
+
+### A simple RNN in Keras `SimpleRNN`
+
+SimpleRNN **processes batches of sequences**. This means it takes inputs of shape `(batch_size, timesteps, input_features)`. When specifying the shape argument of the initial `Input()`, you can set the timesteps entry to `None`, which enables your network to **process sequences of arbitrary length**.
+
+![img_7.png](figs/7/img_7.png)
+
+All recurrent layers in Keras (`SimpleRNN`, `LSTM`, and `GRU`) can be run in **two different modes**: 
+- they can **return** either _full sequences of successive outputs for each timestep_ (a rank-3 tensor of shape `(batch_size, timesteps, output_features)`) or 
+- return only the _last output for each input sequence_ (a rank-2 tensor of shape `(batch_size, output_features)`).
+These two modes are controlled by the `return_sequences` constructor argument. 
+
+![img_8.png](figs/7/img_8.png)
+
+![img_9.png](figs/7/img_9.png)
+
+It’s sometimes useful to **stack several recurrent layers** one after the other in order to increase the representational power of a network. In such a setup, you have to _get all of the intermediate layers to return a **full sequence** of outputs_.
+
+![img_10.png](figs/7/img_10.png)
+
+In practice, you’ll rarely work with the **SimpleRNN layer**. It’s generally _too simplistic to be of real use_. In particular, SimpleRNN has a major issue: although it should theoretically be able to retain at time `t` information about inputs seen many timesteps before, such _long-term dependencies prove impossible to learn in practice_. This is due to the **vanishing gradient problem**, an effect that is similar to what is observed with non-recurrent networks (feedforward networks) that are many layers deep: as you keep adding layers to a network, the network eventually becomes untrainable.
+
+## Long Short-Term Memory (LSTM)
+
+- It adds a way to carry information across many timesteps.
+- It **saves information for later**, thus _preventing older signals from gradually vanishing_ during processing.
+
+![img_11.png](figs/7/img_11.png)
+
+Let’s add to `SimpleRNN` **additional data flow that carries information across timesteps**. Call its _values_ at different timesteps `c_t`, where C stands for carry. This information will have the following **impact** on the cell: it will be combined with the input connection and the recurrent connection (via a dense transformation: a dot product with a weight matrix followed by a bias add and the application of an activation function), and it will affect the state being sent to the next timestep (via an activation function and a multiplication operation). Conceptually, the carry dataflow is a way to modulate the next output and the next state.
+
+The way the **next value of the carry dataflow is computed** involves three distinct transformations. But all three transformations have their own weight matrices, which we’ll index with the letters `i`, `f`, and `k`.
+
+![img_12.png](figs/7/img_12.png)
+
+We obtain the new carry state (the next `c_t`) by combining `i_t`, `f_t`, and `k_t`.
+
+![img_13.png](figs/7/img_13.png)
+
+![img_14.png](figs/7/img_14.png)
+
+The _combination of operations making up an RNN cell_ is better interpreted as a **set of constraints** on your search, not as a design in an engineering sense. Arguably, the _choice of such constraints_—the question of how to implement RNN cells—is better left to **optimization algorithms** (like genetic algorithms or reinforcement learning processes) than to human engineers. 
+
+In summary: you don’t need to understand anything about the specific architecture of an LSTM cell. Just keep in mind what the LSTM cell is meant to do: _allow past information to be reinjected at a later time_, thus fighting the vanishing-gradient problem.
+
+## Advanced use of recurrent neural networks
+
+- **Recurrent dropout**—This is a variant of dropout, used to _fight overfitting_ in recurrent layers.
+- **Stacking recurrent layers**—This _increases the representational power_ of the model (at the cost of higher computational loads).
+- **Bidirectional recurrent layers**—These _present the same information to a recurrent network in different ways_, increasing accuracy and mitigating forgetting issues.
+
+### Recurrent dropout
+
+**Dropout** randomly zeros out input units of a layer in order to break happenstance correlations in the training data that the layer is exposed to. But how to correctly apply dropout in recurrent networks isn’t a trivial question.
+
+It has long been known that **applying dropout before a recurrent layer** **hinders learning** rather than helping with regularization.
+
+**Proper way to use dropout with a recurrent network:** the **same dropout mask** (the same pattern of dropped units) should be **applied at every timestep**, instead of using a dropout mask that varies randomly from timestep to timestep. 
+
+What’s more, in order to **regularize** the representations formed by the recurrent gates of layers such as GRU and LSTM, a **temporally constant _dropout mask_ should be applied to the inner recurrent activations of the layer** (a recurrent dropout mask). Using the same dropout mask at every timestep _allows the network to properly propagate its learning error through time_; a temporally random dropout mask would disrupt this error signal and be harmful to the learning process.
+
+Every recurrent layer in **Keras** has two dropout-related arguments: 
+- `dropout`, a float specifying the dropout rate for input units of the layer, and
+- `recurrent_dropout`, specifying the dropout rate of the recurrent units.
+
+![img_15.png](figs/7/img_15.png)
+
+### Stacking recurrent layers
+
+**Consider increasing the capacity and expressive power of the network.** Recall the description of the universal machine learning workflow: it’s generally a good idea to _increase the capacity of your model until overfitting becomes the primary obstacle_ (assuming you’re already taking basic steps to mitigate overfitting, such as using dropout). As long as you aren’t overfitting too badly, you’re likely under capacity.
+
+**Increasing network capacity** is typically done by _increasing the number of units in the layers or adding more layers_. **Recurrent layer stacking** is a classic way to build more-powerful recurrent networks
+
+To stack recurrent layers on top of each other in Keras, **all intermediate layers should return their full sequence of outputs** (a rank-3 tensor) rather than their output at the last timestep. As you’ve already learned, this is done by specifying `return_sequences=True`.
+
+In the following **example**, we’ll try a _stack of two dropout-regularized recurrent layers_. For a change, we’ll use Gated Recurrent Unit (GRU) layers instead of LSTM. GRU is very similar to LSTM—you can think of it as a slightly simpler, streamlined version of the LSTM architecture.
+
+```python
+inputs = keras.Input(shape=(sequence_length, raw_data.shape[-1]))
+x = layers.GRU(32, recurrent_dropout=0.5, return_sequences=True)(inputs)
+x = layers.GRU(32, recurrent_dropout=0.5)(x)
+x = layers.Dropout(0.5)(x)
+outputs = layers.Dense(1)(x)
+model = keras.Model(inputs, outputs)
+
+callbacks = [
+  keras.callbacks.ModelCheckpoint("jena_stacked_gru_dropout.keras",
+  save_best_only=True)
+]
+model.compile(optimizer="rmsprop", loss="mse", metrics=["mae"])
+history = model.fit(train_dataset,
+  epochs=50,
+  validation_data=val_dataset,
+  callbacks=callbacks)
+model = keras.models.load_model("jena_stacked_gru_dropout.keras")
+```
+
+### Bidirectional RNNs
+
+The last technique we’ll look at in this section is the bidirectional RNN. A bidirectional RNN is a common RNN variant that **can offer greater performance** than a regular RNN on **certain tasks**. It’s frequently used in **natural language processing**.
+
+RNNs are notably **order-dependent**: they process the timesteps of their input sequences in order, and shuffling or reversing the timesteps can completely change the representations the RNN extracts from the sequence. This is precisely the reason they perform well on problems where order is meaningful, such as the temperature forecasting problem. 
+
+A bidirectional RNN exploits the order sensitivity of RNNs: **it uses two regular RNNs**, such as the GRU and LSTM layers you’re already familiar with, _each of which processes the input sequence in one direction_ (chronologically and antichronologically), _and then merges their representations_. By processing a sequence both ways, a bidirectional RNN **can catch patterns that may be overlooked by a unidirectional RNN**.
+
+On text data, reversed-order processing works just as well as chronological processing—you can read text backwards just fine. **Although word order does matter in understanding language, which order you use isn’t crucial**.
+
+Importantly, **an RNN trained on reversed sequences will learn different representations than one trained on the original sequences**. In machine learning, **representations that are different yet useful are always worth exploiting, and the more they differ, the better**: they offer a new angle from which to look at your data, capturing aspects of the data that were missed by other approaches, and thus they can help boost performance on a task. This is the intuition behind **ensembling**.
+
+![img_16.png](figs/7/img_16.png)
+
+To instantiate a bidirectional RNN in Keras, you use the _Bidirectional_ layer, which takes as its first argument a recurrent layer instance. Bidirectional creates a second, separate instance of this recurrent layer and uses one instance for processing the input sequences in chronological order and the other instance for processing the input sequences in reversed order.
+
+```python
+inputs = keras.Input(shape=(sequence_length, raw_data.shape[-1]))
+x = layers.Bidirectional(layers.LSTM(16))(inputs)
+outputs = layers.Dense(1)(x)
+model = keras.Model(inputs, outputs)
+model.compile(optimizer="rmsprop", loss="mse", metrics=["mae"])
+history = model.fit(train_dataset,
+    epochs=10,
+    validation_data=val_dataset)
+```
+
+However, bidirectional RNNs are a great fit for text data, or **any other kind of data where order matters, yet where which order you use doesn’t matter**. In fact, for a while in 2016, bidirectional LSTMs were considered the state of the art on many natural language processing tasks before the rise of the Transformer architecture.
 
 # The Trade-Of Between Prediction Accuracy and Model Interpretability
 
@@ -1630,73 +1845,3 @@ The three plots in  illustrate the examples 1-3. In each case, the blue solid cu
 The relationship between bias, variance, and test set MSE given in equation and displayed in figure is referred to as the bias-variance trade-off. Good test set performance of a statistical learning method requires low variance as well as low squared bias. This is referred to as a trade-off because it is easy to obtain a method with extremely low bias but high variance (for instance, by drawing a curve that passes through every single training observation) or a method with very low variance but high bias (by fitting a horizontal line to the data). The challenge lies in finding a method for which both the variance and the squared bias are low. This trade-off is one of the most important recurring themes in this book.
 
 In a real-life situation in which $f$ is unobserved, it is generally not possible to explicitly compute the test MSE, bias, or variance for a statistical learning method. Nevertheless, one should always keep the bias-variance trade-off in mind. In this book, we explore methods that are extremely flexible and hence can essentially eliminate bias. However, this does not guarantee that they will outperform a much simpler method such as linear regression. To take an extreme example, suppose that the true $f$ is linear. In this situation, linear regression will have no bias, making it very hard for a more flexible method to compete. In contrast, if the true $f$ is highly non-linear and we have an ample number of training observations, then we may do better using a highly flexible approach.
-
-# Q & A
-
-En el entrenamiento de redes neuronales convolucionales, el problema del gradiente desvaneciente puede afectar el aprendizaje de la red. ¿Qué caracteriza al efecto del gradiente desvaneciente?
-
-Seleccione una:
-1. Los gradientes de las capas más profundas se acercan a cero, dificultando la actualización adecuada de los pesos en estas capas.
-2. Los gradientes de todas las capas se vuelven exactamente cero, deteniendo completamente el entrenamiento.
-3. Los gradientes de las capas superiores se vuelven extremadamente grandes, lo que provoca actualizaciones de pesos inestables.
-4. Los gradientes en las capas iniciales se vuelven negativos, lo que lleva a pesos negativos en toda Ia red.
-
-En una red neuronal convolucional (CNN), después de aplicar un filtro o kernel a una imagen o capa anterior, se produce un "feature map". ¿Cuál es el principal propósito de este "feature map"?
-
-1. Convertir la imagen original en una representación binaria para facilitar el procesamiento.
-2. Resaltar características específicas de la entrada, como bordes, texturas o patrones.
-3. Reducir inmediatamente la dimensionalidad de la imagen para ahorrar espacio de memoria.
-
-Si estás diseñando una red neuronal para abordar un problema de regresión lineal, ¿cuál de las siguientes afirmaciones sobre la arquitectura de la red es correcta?
-1. La red debe utilizar exclusivamente funciones de activación ReLU en todas las capas, incluida la capa de salida.
-2. La capa de salida debe tener una función de activación softmax.
-3. La red debe contener múltiples capas de salida para representar diferentes
-4. La capa de salida debe tener exactamente una neurona sin función de activación o con una función de activación lineal.
-
-Estás trabajando con una red neuronal convolucional (CNN) y observas que el modelo no está desempeñándose lo suficientemente bien. ¿Cuál de las siguientes acciones podría ayudar a mejorar el desempeño de tu CNN?
-1. Introducir técnicas de aumento de datos para expandir y diversificar el conjunto de entrenamiento.
-2. Reducir al mínimo el número de filtros en las capas convolucionales para acelerar el entrenamiento.
-3. Utilizar únicamente capas completamente conectadas y eliminar las capas convolucionales.
-4. Modificar el tamaño de la imagen de entrada para que coincida exactamente con el tamaño de los kernels.
-
-En el aprendizaje profundo, cuando un modelo presenta "overfitting", ¿qué significa?
-1. EI modelo tiene un rendimiento mediocre tanto en los datos de entrenamiento como en los datos de prueba.
-2. El modelo tiene un rendimiento sobresaliente en los datos de entrenamiento, pero no se desempeña tan bien en datos no vistos o de prueba.
-3. El modelo se entrena demasiado rápido y no necesita regularización.
-4. El modelo es demasiado sencillo y no puede capturar la complejidad subyacente de los datos.
-
-En regresión lineal, el método de regularización Lasso (LI) es utilizado para penalizar modelos complejos. ¿Cuál es una característica distintiva de la regularización Lasso en comparación con otros métodos de regularización, como Ridge (L2)?
-1. Lasso puede llevar algunos coeficientes exactamente a cero, realizando así una selección de características.
-2. Lasso aumenta la multicolinealidad entre las variables independientes.
-3. Lasso siempre prioriza Ia penalización de coeficientes negativos sobre los positivos.
-4. Lasso solo penaliza los coeficientes más grandes, dejando los demás sin cambios.
-
-En el contexto de la regresión, ¿cuál es el propósito principal de la técnica de regularización Ridge?
-1. Reducir la multicolinealidad entre las variables independientes.
-2. Añadir un término de penalización al modelo para prevenir el sobreajuste, penalizando los coeficientes grandes.
-3. Aumentar la varianza del modelo para mejorar su capacidad de generalización.
-4. Minimizar el valor absoluto de los coeficientes a cero para reducir la dimensionalidad.
-
-En el aprendizaje profundo, cuando un modelo presenta "underfitting", ¿qué implica?
-1. El modelo tiene una capacidad excesiva y memoriza los datos de entrenamiento.
-2. EI modelo necesita más capas y neuronas para mejorar su rendimiento.
-3. El modelo se desempeña excepcionalmente bien en datos no vistos o de prueba, pero mal en los datos de entrenamiento.
-4. El modelo es demasiado simple y no logra capturar patrones o relaciones subyacentes en los datos.
-
-En regresión lineal, ¿qué indica el valor de $R^2R$ (coeficiente de determinación) sobre un modelo?
-1. La precisión con la que las variables independientes son seleccionadas.
-2. La varianza total de los errores del modelo.
-3. La proporción de la varianza de la variable dependiente que es predecida a partir de las variables independientes.
-4. La relación entre la media de las variables independientes y dependientes.
-
-En el contexto de la regresión lineal múltiple,  ¿qué es la multicolinealidad?
-1. Es una situación en la que dos o más variables independientes en un modelo de regresión múltiple tienen una alta correlación entre sí.
-2. Es la técnica para maximizar el ajuste del modelo.
-3. Es el valor predicho por el modelo de regresión.
-4. Es cuando las variables independientes tienen una correlación perfecta entre  sí.
-
-En análisis de datos, ¿por qué es importante identificar y manejar los "outliers"?
-1. Porque son siempre errores en los datos y deben ser eliminados.
-2. Porque pueden mejorar la precisión y  relevancia de las conclusiones.
-3. Porque indican que el modelo de análisis es incorrecto.
-4. Porque pueden distorsionar y sesgar los resultados, afectando la validez de las conclusiones.
