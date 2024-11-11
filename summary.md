@@ -2914,6 +2914,231 @@ Retrieval-Augmented Generation (RAG) is a technique that combines the strengths 
 
 ![img_19.png](figs/10/img_19.png)
 
+# Reglas de Asociación
+Dr. Jorge Guerra (Jorch)
+jorge.guerra881215@gmail.com
+Problema:
+Supongamos que queremos ayudar a Google en su producto Gmail
+creando una cola con prioridad para la bandeja de entrada. De esta manera
+los correos de entrada se irán ordenando no por orden de llegada sino por
+orden de importancia respecto a cada usuario.
+
+Reglas de
+Asociación
+Regla de asociación:
+Describe una relación de asociación entre los elementos de un conjunto de
+datos relevantes.
+Ejemplos:
+● Estudiantes que cursan Machine Learning tienden a cursar Estadística
+Aplicada
+● Clientes que compran productos lácteos tienden a comprar productos
+panificados.
+● Artículos que referencian a Srikant (1997) citan también a Agrawal.
+(1993).
+Origen: Market Basket Analysis
+Se denomina Canasta de Mercado a una colección de ítems que un
+cliente compra en una misma transacción.
+Problema: identificar el conjunto de ítems que son adquiridos en
+conjunto.
+Intenta identificar reglas de la forma:
+{fideos, queso rallado} -> {salsa}
+{viernes, persona adulta, carne} -> {fernet, coca-cola}
+Definición Reglas de Asociación
+De manera general: X -> Y donde X e Y son conjuntos de ítems del dominio.
+X se denomina el antecedente de la regla donde Y sería su consecuente.
+Definición Reglas de Asociación
+De manera general: X -> Y donde X e Y son conjuntos de ítems del dominio.
+X se denomina el antecedente de la regla donde Y sería su consecuente.
+● Soporte: El soporte para la regla X -> Y es el porciento de las
+transacciones que contienen todos los ítems de X e Y.
+● Confianza: La confianza para la regla X -> Y es el porciento de
+transacciones que contienen Y, entre las transacciones que contienen
+X.
+???
+???
+0,75
+1
+Interpretación de las Métricas
+● Regla de bajo soporte
+○ Puede haber aparecido por casualidad.
+● Regla con baja confianza
+○ Es probable que no exista relación entre antecedentes y
+consecuente
+¿Que diferencia a X -> Y de Y -> X?
+Interpretación de las Métricas
+● Regla de bajo soporte
+○ Puede haber aparecido por casualidad.
+● Regla con baja confianza
+○ Es probable que no exista relación entre antecedentes y
+consecuente
+¿Que diferencia a X -> Y de Y -> X?
+● Tiene el mismo soporte pero distinta confianza
+VS
+Algoritmo de Descubrimiento
+Objetivo
+Encontrar Reglas de Asociación con altos valores de soporte y confianza
+● Umbrales de minsup y minconf definidos por el usuario
+Importante: Encontrar dichas reglas no significa que deba existir una
+relación entre antecedente y consecuente. Por lo tanto, un experto en el
+dominio del problema debería siempre evaluar las reglas.
+I = { i1, i2, …., im } es un conjunto de ítems.
+D es un conjunto de transacciones Tj. Donde cada Tj es
+un conjunto de ítems (subconjunto de I).
+
+El descubrimiento de las reglas puede ser descompuesto de
+dos subproblemas:
+1. Encontrar todos los itemsets que tienen el soporte mayor
+que el soporte mínimo (itemsets frecuentes).
+2. Utilizar los itemsets frecuentes para generar las reglas
+deseadas.
+a. Para cada itemsets frecuentes L (k>1), encontrar todos los
+subconjuntos no vacios, y para cada subconjunto {a} generar
+una regla {a}->{L-a} si la confianza es mayor que el minconf.
+i. Para el itemset frecuente {A, B, C}:
+{A}->{BC}, {AB}->{C}, {AC}->{B}, {B}->{AC}, {BC}->{A}, {C}->{AB}
+Algoritmos
+● Apriori y AprioriTid (Agrawal & Srikant,1994)
+● Opus (Webb,1996)
+● Direct Hasing and Pruning (DHP) (Adamo, 2001)
+● Dynamic Set Counting (DIC) (Adamo, 2001)
+● Charm (Zaki & Hsiao, 2002)
+● FP-growth (Han, Pei & Yin, 1999)
+● Closet (Pei, Han & Mao, 2000)
+¿Qué los hace diferentes?
+● Forma en que los datos son cargados en memoria
+● Tiempo de procesamiento
+● Tipos de atributos (numéricos, categóricos)
+● Forma en que los itemsets son generados
+● Estructura de datos utilizada
+¿Qué los hace diferentes?
+● Forma en que los datos son cargados en memoria
+● Tiempo de procesamiento
+● Tipos de atributos (numéricos, categóricos)
+● Forma en que los itemsets son generados
+● Estructura de datos utilizada
+Los diferentes algoritmos deben siempre generar el mismo
+conocimiento.
+Ejemplo
+TID ítems ● Soporte mínimo (minsup) = 0.7
+111 lapicera, tinta, agenda, jabón
+112 lapicera, tinta, agenda
+113 lapicera, agenda
+114 lapicera, tinta, jabón, arroz
+Ejemplo
+● Soporte mínimo (minsup) = 0.7
+● Nivel 1: Encontrar 1-itemsets frecuentes
+{lapicera},{tinta},{agenda},{jabón}, {arroz}
+TID ítems
+111 lapicera, tinta, agenda, jabón
+112 lapicera, tinta, agenda
+113 lapicera, agenda
+114 lapicera, tinta, jabón, arroz
+Ejemplo
+● Soporte mínimo (minsup) = 0.7
+● Nivel 1: Encontrar 1-itemsets frecuentes
+{lapicera},{tinta},{agenda},{jabón}, {arroz}
+TID ítems
+111 lapicera, tinta, agenda, jabón
+112 lapicera, tinta, agenda
+113 lapicera, agenda
+114 lapicera, tinta, jabón, arroz
+Ejemplo
+● Soporte mínimo (minsup) = 0.7
+● Nivel 1: Encontrar 1-itemsets frecuentes
+{lapicera},{tinta},{agenda},{jabón}, {arroz}
+● Nivel 2: Encontrar 2-itemsets frecuentes
+TID ítems
+111 lapicera, tinta, agenda, jabón
+112 lapicera, tinta, agenda
+113 lapicera, agenda
+114 lapicera, tinta, jabón, arroz
+Ejemplo
+● Nivel 3:
+● Nivel 4:
+{lapicera, tinta, agenda, jabón}, {lapicera, tinta,
+agenda, arroz}, {tinta, agenda, arroz, jabón} ...
+TID ítems
+111 lapicera, tinta, agenda, jabón
+112 lapicera, tinta, agenda
+113 lapicera, agenda
+114 lapicera, tinta, jabón, arroz
+Ejemplo
+TID ítems
+111 lapicera, tinta, agenda, jabón
+112 lapicera, tinta, agenda
+113 lapicera, agenda
+114 lapicera, tinta, jabón, arroz
+Los itemsets frecuentes son:
+{lapicera}, {tinta}, {agenda}
+{lapicera, tinta},{lapicera, agenda}
+¿Qué relación existe entre los n-itemsets y los n+1-itemsets
+eliminados?
+¿Qué relación existe entre los n-itemsets y los n+1-itemsets
+eliminados?
+¿Qué relación existe entre los n-itemsets y los n+1-itemsets
+eliminados?
+Refinamiento: extender los itemsets frecuentes de una
+forma que asegure que todos sus subconjuntos son
+itemsets frecuentes.
+Propiedad Apriori
+Propiedad Apriori: cada subconjunto de un itemset frecuente debe ser
+también un itemset frecuente.
+Podemos crear itemsets frecuentes iterativamente, tomando los
+itemsets frecuentes de tamaño n y extendiéndolos a itemsets frecuentes
+de tamaño n+1.
+Algoritmo Apriori
+1. Se calcula el soporte de cada ítem individual, y se
+determinan los 1-itemsets frecuentes.
+2. En cada paso subsecuente, los itemsets frecuentes
+generados en los pasos anteriores se utilizan para
+generar los nuevos itemsets (itemsets candidatos).
+3. Se calcula el soporte de cada itemset candidato y se
+determinan los itemsets frecuentes.
+4. El proceso continúa hasta que no pueden ser
+encontrados nuevos itemsets frecuentes.
+
+Derivación de Reglas de asociación
+Para cada itemset frecuente I, se generan todos los subconjuntos no
+vacios de I.
+Para cada subconjunto a ⊂ I se genera una regla de la forma a -> (I-a) si
+la taza entre soporte(I) y soporte(a) es al menos la confianza mínima
+(minconf).
+
+2/2
+2/2
+2/3
+2/2
+2/3
+2/3
+2/2
+2/3
+2/3
+2/3
+
+Software
+● MLxtend: http://rasbt.github.io/mlxtend/
+● Weka (http://www.cs.waikato.ac.nz/~ml/weka/)
+● Knime: http://www.knime.org/
+● RapidMiner: http://rapid-i.com/content/view/181/190/
+● AIAS: Association Interestingness Analysis System
+(http://www.comp.nus.edu.sg/~dm2)
+● Gnome Data Mine (linux):
+(http://www.togaware.com/datamining/gdatamine/gdmapriori.html)
+● FIMI, Frequent Itemset Mining Implementations repository, incluye
+software y datasets.
+● Useful links: http://www.kdnuggets.com/software/associations.html
+Conclusiones
+● Las reglas de asociación son útiles para descubrir asociaciones entre
+conjuntos de ítems en una base de datos de transacciones.
+● Puede ser utilizado en múltiples dominios: análisis de canasta de mercado,
+datos de censos, recomendación, aprendizaje en sistemas multiagentes,
+etc..
+● Varios algoritmos de descubrimiento de reglas de asociación, descubren el
+mismo conocimiento.
+● Son necesarias diversas tareas de post-procesamiento para eliminar reglas
+no interesantes, podar reglas redundantes, etc.
+● Extensiones: Reglas de asociación generalizadas, difusas, temporales, etc.
+
 # The Bias-Variance Trade-Of
 
 Though the mathematical proof is beyond the scope of this book, it is possible to show that the expected test MSE, for a
