@@ -1,4 +1,4 @@
-<!-- TOC -->
+from pandas.io.clipboard import paste<!-- TOC -->
 * [Linear Regression](#linear-regression)
   * [Linear Regression for the Advertising Data](#linear-regression-for-the-advertising-data)
   * [Simple linear regression using a single predictor X.](#simple-linear-regression-using-a-single-predictor-x)
@@ -2111,6 +2111,54 @@ embedding_layer = layers.Embedding(
 ```
 
 # The Transformer architecture
+
+Transformers were introduced in the seminal paper **“Attention is all you need”**. The gist of the paper is right there in the title: as it turned out, a simple mechanism called “**neural attention**” could be used to build powerful sequence models that didn’t feature any recurrent layers or convolution layers. 
+
+Neural attention has fast become one of the most influential ideas in deep learning.
+
+## Understanding self-attention
+
+Not all input information seen by a model is equally important to the task at hand, so models should “pay more attention” to some features and “pay less attention” to other features.
+
+There are many different forms of attention you could imagine, but they all start by computing importance scores for a set of features, with higher scores for more relevant features and lower scores for less relevant ones. How these scores should be computed, and what you should do with them, will vary from approach to approach.
+
+This kind of attention mechanism can be used to make features **context-aware**. You’ve just learned about **word embeddings**—vector spaces that capture the “shape” of the semantic relationships between different words. In an embedding space, _a single word has a fixed position—a fixed set of relationships with every other word in the space_. But that’s not quite how language works: **the meaning of a word is usually context-specific**. 
+
+Clearly, a **smart embedding** space would provide a _different vector representation for a word depending on the other words surrounding it_. That’s where self-attention comes in. The purpose of **self-attention** is to _modulate the representation of a token by using the representations of related tokens in the sequence_. This produces **context aware token representations**. 
+
+![img.png](img.png)
+
+**_Step 1_** is to _compute relevancy scores between the vector for “station” and every other word_ in the sentence. These are our “**attention scores**.” We’re simply going to use the **dot product** between two word vectors as a _measure of the strength of their relationship_. It’s a very computationally efficient distance function, and it was already the standard way to relate two word embeddings to each other long before Transformers. In practice, **these scores will also go through a scaling function and a softmax**.
+
+**_Step 2_** is to _compute the sum of all word vectors in the sentence, weighted by our relevancy scores_. Words closely related to “station” will contribute more to the sum (including the word “station” itself), while irrelevant words will contribute almost nothing. The resulting vector is our _new representation for “station”_: **a representation that incorporates the surrounding context**. In particular, it includes part of the “train” vector, clarifying that it is, in fact, a “train station.”
+
+You’d repeat this process for every word in the sentence, producing a new sequence of vectors encoding the sentence.
+
+### Generalized Self-Attention: The Query-Key-Value Mode
+
+So far, we have only considered one input sequence. However, the Transformer architecture was originally developed for machine translation, where you have to deal with **two input sequences**: the source sequence you’re currently translating (such as “How’s the weather today?”), and the target sequence you’re converting it to (such as “¿Qué tiempo hace hoy?”). **A Transformer is a sequence-to-sequence model**: it was designed to convert one sequence into another.
+
+Now let’s take a step back. The self-attention mechanism as we’ve introduced it performs the following, schematically:
+
+![img_1.png](img_1.png)
+
+This means “for each token in inputs (A), compute how much the token is related to every token in inputs (B), and use these scores to weight a sum of tokens from inputs (C).”
+
+```python
+outputs = sum(values * pairwise_scores(query, keys))
+```
+
+There’s nothing that requires A, B, and C to refer to the same input sequence. In the general case, you could be doing this with three different sequences. We’ll call them “query,” “keys,” and “values.” The operation becomes “**for each element in the query, compute how much the element is related to every key, and use these scores to weight a sum of values**”.
+
+![img_2.png](img_2.png)
+
+## Multi-head attention
+
+The “multi-head” moniker refers to the fact that _the output space of the self-attention layer gets factored into a set of independent subspaces, learned separately_: the initial query, key, and value are sent through three independent sets of dense projections, resulting in three separate vectors. Each vector is processed via neural attention, and the three outputs are concatenated back together into a single output sequence. **Each such subspace is called a “head”**.
+
+![img_3.png](img_3.png)
+
+The presence of the learnable dense projections enables the layer to actually learn something. In addition, having **independent heads** helps the layer _learn different groups of features for each token_, where features within one group are correlated with each other but are mostly independent from features in a different group.
 
 # The Bias-Variance Trade-Of
 
