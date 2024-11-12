@@ -3152,6 +3152,152 @@ Se generan las reglas:
 - Son necesarias diversas tareas de post-procesamiento para eliminar reglas no interesantes, podar reglas redundantes, etc.
 - Extensiones: Reglas de asociación generalizadas, difusas, temporales, etc.
 
+# Recommender System or Recommendation System
+
+Recommender Systems are **software tools and techniques providing suggestions for items to be of use to a user**. The suggestions provided are aimed at _supporting their users in various decision-making processes_, such as what items to buy, what music to listen, or what news to read. Recommender systems have proven to be valuable means for online users to cope with the information overload and have become one of the most powerful and popular tools in e-commerce. 
+
+Basic idea:
+- if A and B are similar to each other and A prefers an item X, then B is also likely to prefer X (need to measure **user similarity**).
+- if two items X and Y are similar to each other and A prefers an item X, then A is also likely to prefer Y (need to measure **item similarity**).
+
+**How to measure the similarity?**
+
+**Represent users and items as feature vectors** and compute correlation coefficient or cosine similarity between them.
+
+## Content-Based and Collaborative Filtering
+
+### Content-Based (CB)
+
+CB methods are based on a **description of the item and a profile of the user’s preferences**. These methods are best suited to situations where there is **known data on an item** (name, location, description, etc.), but **not on the user**. CB recommenders treat recommendation as a **user-specific classification problem** and learn a classifier for the user’s likes and dislikes based on an item’s features.
+
+### Collaborative Filtering (CF)
+
+CF methods are based on **collecting and analyzing a large amount of information on users’ behaviors, activities or preferences** and predicting what users will like based on their similarity to other users. CF methods are further divided into two sub-categories: **user-based** and **item-based** collaborative filtering.
+
+**CF methods are more commonly used** than CB methods because they usually give better results and are relatively easy to understand and implement. The algorithm has the ability to do feature learning on its own, which means that it can start to learn for itself what features to use.
+
+CF methods **suffer from new-item problems**, i.e., they cannot recommend items that have no ratings. This does not limit content-based approaches since the prediction for new items is based on their description (features) that are typically easily available.
+
+![img.png](figs/12/img.png)
+
+**Hybrid** approaches that combine CF and CB, often incorporating deep learning, have become popular as they offer improved accuracy and robustness.
+
+## CF Approaches
+
+### k-Nearest Neighbors (k-NN)
+
+#### _USER BASED RATING PREDICTION_
+
+The **k-NN of user u** is the set of k users that are most similar to user u.
+
+The **Pearson Correlation (PC) similarity** is used to find the k-nearest neighbors. The PC similarity is calculated as follows:
+
+$$ \text{sim}(u, v) = \frac{\sum_{i \in I_u \cap I_v} (r_{ui} - \bar{r}_u)(r_{vi} - \bar{r}_v)}{\sqrt{\sum_{i \in I_u \cap I_v} (r_{ui} - \bar{r}_u)^2 \sum_{i \in I_u \cap I_v} (r_{vi} - \bar{r}_v)^2}} $$
+
+where:
+- $u$ and $v$ are two users.
+- $I_u$ and $I_v$ are the sets of items that have been rated by users $u$ and $v$.
+- $r_{ui}$ and $r_{vi}$ are the ratings of items $i$ by users $u$ and $v$.
+- $\bar{r}_u$ and $\bar{r}_v$ are the average ratings of users $u$ and $v$.
+
+_Example: Calculate the Pearson Correlation between users 1 and 2._
+
+|       | Item1 | Item2 | Item3 | Item4 | Item5 |
+|-------|-------|-------|-------|-------|-------|
+| User1 | 5     | 3     | 4     | 4     |       |
+| User2 | 3     | 1     | 2     | 3     | 3     |
+| User3 | 4     | 3     | 4     | 3     | 5     |
+| User4 | 3     | 3     | 1     | 5     | 4     |
+| User5 | 1     | 5     | 5     | 2     | 1     |
+
+First, calculate the average rating for each user:
+- $\bar{r}_1 = \frac{5 + 3 + 4 + 4}{4} = 4$
+- $\bar{r}_2 = \frac{3 + 1 + 2 + 3 + 3}{5} = 2.4$
+
+Then, calculate the Pearson Correlation:
+$$ \text{sim}(1, 2) = \frac{(5 - 4)(3 - 2.4) + (3 - 4)(1 - 2.4) + (4 - 4)(2 - 2.4) + (4 - 4)(3 - 2.4)}{\sqrt{(5 - 4)^2 + (3 - 4)^2 + (4 - 4)^2 + (4 - 4)^2} \sqrt{(3 - 2.4)^2 + (1 - 2.4)^2 + (2 - 2.4)^2 + (3 - 2.4)^2}} $$
+
+$$ \text{sim}(1, 2) =  \frac{1 \cdot 0.6 + -1 \cdot (-1.4)}{\sqrt{1 + 1}\sqrt{0.6^2 + 1.4^2 + 0.4^2 + 0.6 ^2}}$$
+
+$$ \text{sim}(1, 2) =  \frac{0.6 + 1.4}{\sqrt{2}\sqrt{2.84}}$$
+
+$$ \text{sim}(1, 2) =  \frac{2}{2.38} = 0.84 $$
+
+Thus:
+$$\text{1-NN} = sim(1, 2) = 0.84$$
+$$\text{2-NN} = sim(1, 3) = 0.61$$
+
+The rating of $\hat{r}_{u, i}$ can be estimated as the average rating given to i by these neighbors:
+
+$$\hat{r}_{u, i} = \bar{r}_u + \frac{\sum_{v \in N} \text{sim}(u, v)(r_{vi} - \bar{r}_v)}{\sum_{v \in N} \text{sim}(u, v)}$$
+
+where $N$ is the set of k-nearest neighbors of user u.
+
+#### _ITEM BASED RATING PREDICTION_
+
+The **k-NN of item i** is the set of k items that are most similar to item i. 
+
+The **Cosine Similarity** is used to find the k-nearest neighbors. It's calculated as follows:
+
+$$ \text{sim}(i, j) = \frac{\sum_{u \in U_{ij}} r_{ui} r_{uj}}{\sqrt{\sum_{u \in U_{ij}} r_{ui}^2 \sum_{u \in U_{ij}} r_{uj}^2}} $$
+
+where:
+- $i$ and $j$ are two items.
+- $U_{ij}$ is the set of users that have rated both items $i$ and $j$.
+- $r_{ui}$ and $r_{uj}$ are the ratings of items $i$ and $j$ by user $u$.
+
+#### Pros and Cons
+
+**Pros:**
+- Simple and easy to implement.
+- No training phase is required.
+
+**Cons:**
+- The prediction quality may be poor when user-item interaction matrix sparsity is high.
+- Not scalable to large datasets.
+
+### Matrix Factorization
+
+**Matrix factorization** algorithms work by decomposing the user-item interaction matrix into the product of two lower dimensionality rectangular matrices. When these matrices are multiplied, they approximate the original matrix. The **aim** is to fill in the missing values by understanding the hidden _(latent) features_ influencing preferences.
+
+![img_1.png](figs/12/img_1.png)
+
+The concept of "latent" refers to underlying, unobservable variables that influence observed behavior, such as a user’s hidden preferences for certain types of products or media genres. A **latent model** represents _hidden patterns or relationships in data_, often derived from factorizing large matrices of user-item interactions. 
+
+_Each user and item is represented as a vector in a shared "latent space"_, where similar items and users are closer together. A **rating prediction** (e.g., how much a user might like a new movie) can be calculated by finding the dot product of these vectors ($\hat{r}_{ij} = user_i \cdot item_j$), allowing the system to make recommendations based on underlying patterns, even if they aren't directly observable.
+
+![img_2.png](figs/12/img_2.png)
+
+The **goal** is to find $P$ and $Q$ such that their product approximates $R$ as closely as possible. This is achieved by minimizing the **Root Mean Square Error (RMSE)** between the observed ratings and the predicted ratings.
+
+$$argmin_{P, Q} RSME(R, P^T, Q)$$
+
+where:
+- $r_{ij}$ is the observed rating for user $i$ and item $j$.
+- $p_i$ and $q_j$ are the latent vectors for user $i$ and item $j$.
+
+This optimization problem can be solved using **gradient descent** or **alternating least squares**.
+
+Much of the strength of matrix factorization models stems from their natural ability to handle additional features of the data, including implicit feedback and temporal information.
+
+### Random Walk on Graph
+
+- Users and items are represented as a bipartite graph; users and items are nodes and the ratings are links between them.
+- Unknown ratings (links) between users and items are estimated by random walk, similar to the PageRank algorithm.
+
+_Process:_
+
+- A random walk involves starting at a user node (or item node) and moving to an adjacent node (item or user) with a certain probability.
+- By following paths through the graph, the algorithm explores connections between users and items, even if a direct link (rating) does not exist.
+- The algorithm essentially tries to estimate the probability that a user might be interested in an item based on the connections it finds.
+
+![img_3.png](figs/12/img_3.png)
+
+_How Recommendations Are Made_
+- Starting from a user node, the algorithm performs a random walk and accumulates scores on each item node visited.
+- Items with high accumulated scores are considered highly likely to be of interest to the user.
+- The system then ranks items by score and recommends the top items to the user.
+
 # The Bias-Variance Trade-Of
 
 Though the mathematical proof is beyond the scope of this book, it is possible to show that the expected test MSE, for a
