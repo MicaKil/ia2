@@ -138,7 +138,6 @@
     * [Recurrent dropout](#recurrent-dropout)
     * [Stacking recurrent layers](#stacking-recurrent-layers)
     * [Bidirectional RNNs](#bidirectional-rnns)
-* [The Trade-Of Between Prediction Accuracy and Model Interpretability](#the-trade-of-between-prediction-accuracy-and-model-interpretability)
 * [Deep learning for text](#deep-learning-for-text)
   * [Preparing text data](#preparing-text-data)
     * [Text standardization](#text-standardization)
@@ -188,6 +187,7 @@
       * [Pros and Cons](#pros-and-cons)
     * [Matrix Factorization](#matrix-factorization)
     * [Random Walk on Graph](#random-walk-on-graph)
+* [The Trade-Of Between Prediction Accuracy and Model Interpretability](#the-trade-of-between-prediction-accuracy-and-model-interpretability)
 * [The Bias-Variance Trade-Of](#the-bias-variance-trade-of)
 <!-- TOC -->
 
@@ -2043,8 +2043,8 @@ elements_.
 of size `(timesteps, input_features)`. It **loops over timesteps**, and _at each timestep_, it considers its current
 state at `t` and the input at `t` (of shape (`input_features,`), and _combines them to obtain_ the **output** at `t`.
 We’ll then set the **state for the next step** to be _this previous output_. For the first timestep, the previous output
-isn’t defined; hence, there is no current state. So we’ll initialize the state as an _all-zero vector_ called the *
-*initial state** of the network.
+isn’t defined; hence, there is no current state. So we’ll initialize the state as an _all-zero vector_ called the 
+**initial state** of the network.
 
 ![img_3.png](figs/7/img_3.png)
 
@@ -2252,28 +2252,6 @@ history = model.fit(train_dataset,
 However, bidirectional RNNs are a great fit for text data, or **any other kind of data where order matters, yet where
 which order you use doesn’t matter**. In fact, for a while in 2016, bidirectional LSTMs were considered the state of the
 art on many natural language processing tasks before the rise of the Transformer architecture.
-
-# The Trade-Of Between Prediction Accuracy and Model Interpretability
-
-![img_4.png](figs/3/img_4.png)
-
-*In general, as the flexibility of a method increases, its interpretability decreases.*
-
-There are several reasons that we might prefer a more restrictive model instead of a very flexible approach. If we are
-mainly interested in inference, then restrictive models are much more interpretable. For instance, when inference is the
-goal, the linear model may be a good choice since it will be quite easy to understand the relationship between $Y$
-and $X_1, X_2,...,X_p$. In contrast, very flexible approaches, such as the splines and boosting methods, can lead to
-such complicated estimates of $f$ that it is difficult to understand how any individual predictor is associated with the
-response.
-
-We have established that when inference is the goal, there are clear advantages to using simple and relatively
-inflexible statistical learning methods. In some settings, however, we are only interested in prediction, and the
-interpretability of the predictive model is simply not of interest. For instance, if we seek to develop an algorithm to
-predict the price of a stock, our sole requirement for the algorithm is that it predict accurately— interpretability is
-not a concern. In this setting, we might expect that it will be best to use the most flexible model available.
-Surprisingly, this is not always the case! We will often obtain more accurate predictions using a less flexible method.
-This phenomenon, which may seem counterintuitive at frst glance, has to do with the potential for overflowing in highly
-flexible methods.
 
 # Deep learning for text
 
@@ -3314,6 +3292,28 @@ _How Recommendations Are Made_
 - Starting from a user node, the algorithm performs a random walk and accumulates scores on each item node visited.
 - Items with high accumulated scores are considered highly likely to be of interest to the user.
 - The system then ranks items by score and recommends the top items to the user.
+
+# The Trade-Of Between Prediction Accuracy and Model Interpretability
+
+![img_4.png](figs/3/img_4.png)
+
+*In general, as the flexibility of a method increases, its interpretability decreases.*
+
+There are several reasons that we might prefer a more restrictive model instead of a very flexible approach. If we are
+mainly interested in inference, then restrictive models are much more interpretable. For instance, when inference is the
+goal, the linear model may be a good choice since it will be quite easy to understand the relationship between $Y$
+and $X_1, X_2,...,X_p$. In contrast, very flexible approaches, such as the splines and boosting methods, can lead to
+such complicated estimates of $f$ that it is difficult to understand how any individual predictor is associated with the
+response.
+
+We have established that when inference is the goal, there are clear advantages to using simple and relatively
+inflexible statistical learning methods. In some settings, however, we are only interested in prediction, and the
+interpretability of the predictive model is simply not of interest. For instance, if we seek to develop an algorithm to
+predict the price of a stock, our sole requirement for the algorithm is that it predict accurately— interpretability is
+not a concern. In this setting, we might expect that it will be best to use the most flexible model available.
+Surprisingly, this is not always the case! We will often obtain more accurate predictions using a less flexible method.
+This phenomenon, which may seem counterintuitive at frst glance, has to do with the potential for overflowing in highly
+flexible methods.
 
 # The Bias-Variance Trade-Of
 
